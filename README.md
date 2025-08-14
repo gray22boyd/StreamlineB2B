@@ -15,6 +15,7 @@ A comprehensive B2B automation platform that combines AI-powered customer servic
 - PostgreSQL database (Supabase recommended)
 - Facebook Business account (for marketing features)
 
+
 ## 🛠️ Installation
 
 1. **Clone the repository**
@@ -23,12 +24,18 @@ A comprehensive B2B automation platform that combines AI-powered customer servic
    cd StreamlineB2B
    ```
 
-2. **Install dependencies**
+2. **Create and activate venv**
+   '''bash
+   uv venv .venv
+   .venv\Scripts\Activate.ps1
+
+
+3. **Install dependencies**
    ```bash
    pip install -e .
    ```
 
-3. **Set up environment variables**
+4. **Set up environment variables**
    Create a `.env` file in the root directory:
    ```env
    DATABASE_URL=postgresql://username:password@host:port/database
@@ -36,7 +43,7 @@ A comprehensive B2B automation platform that combines AI-powered customer servic
    FACEBOOK_BUSINESS_ID=your_business_id
    ```
 
-4. **Test database connection**
+5. **Test database connection**
    ```bash
    python test_db_connection.py
    ```
