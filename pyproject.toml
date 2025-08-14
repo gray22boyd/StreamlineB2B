@@ -6,7 +6,11 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "facebook-business>=23.0.1",
+    "fastapi>=0.116.1",
     "fastmcp>=2.11.3",
+    "mcp>=1.12.4",
     "psycopg2-binary>=2.9.10",
     "python-dotenv>=1.1.1",
+    "python-facebook-api>=0.20.1",
+    "uvicorn>=0.35.0",
 ]
