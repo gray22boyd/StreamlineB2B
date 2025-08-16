@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Streamline Automation Co{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto text-center">
+        <h1 class="display-4 mb-4">Welcome to Streamline Automation Co</h1>
+        <p class="lead mb-4">
+            Automate your social media marketing with our powerful Facebook page management tools.
+        </p>
+        
+        <div class="row mt-5">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">📱 Page Management</h5>
+                        <p class="card-text">Manage multiple Facebook pages from one dashboard</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">✍️ Content Posting</h5>
+                        <p class="card-text">Schedule and publish posts with text and images</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">📊 Analytics</h5>
+                        <p class="card-text">Track performance and engagement metrics</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-5">
+            <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">
+                Connect Your Facebook Pages
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
