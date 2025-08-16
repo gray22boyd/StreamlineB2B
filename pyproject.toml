@@ -64,6 +64,13 @@ Changelog = "https://github.com/yourusername/streamlineb2b/blob/main/CHANGELOG.m
 
 [project.scripts]
 streamlineb2b = "streamlineb2b.cli:main"
+pdf-chunker = "utils.pdf_chunker:main"
+test-db-connection = "test_db_connection:test_connection"
+supa = "utils.supa:main" # REVIEW: No main() found, please add if needed
+rag = "utils.RAG:main" # REVIEW: No main() found, please add if needed
+table-creation = "test.table_creation:main" # REVIEW: No main() found, please add if needed
+table-uploader = "test.table_uploader:main" # REVIEW: No main() found, please add if needed
+rag-test = "test.rag_test:test_connection"
 
 [build-system]
 requires = ["hatchling"]
