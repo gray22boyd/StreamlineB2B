@@ -70,19 +70,6 @@ def embed_chunks(chunks: list[dict]):
 
 
 
-def save_embeddings_to_json(embeddings: list[dict], output_path: Path):
-    """Save embeddings to JSON file."""
-    import json
-    with open(output_path, 'w') as f:
-        json.dump(embeddings, f, indent=2)
-
-
-def save_chunks_to_json(chunks: list[dict], output_path: Path):
-    """Save chunks to JSON file."""
-    import json
-    with open(output_path, 'w') as f:
-        json.dump(chunks, f, indent=2)
-
 def upload_to_supabase(pdf_path: Path):
     """Upload pdf chunks and embeddings to Supabase."""
     import psycopg2
