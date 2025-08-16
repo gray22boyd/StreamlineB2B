@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - StreamlineB2B{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Admin Sidebar -->
+        <div class="col-md-3 col-lg-2 bg-dark text-white sidebar">
+            <div class="d-flex flex-column h-100">
+                <div class="p-3 border-bottom border-secondary">
+                    <h5 class="mb-0">🛠️ Admin Panel</h5>
+                    <small class="text-muted">{{ user.name }}</small>
+                </div>
+
+                <div class="flex-grow-1 p-3">
+                    <div class="nav flex-column">
+                        <a href="{{ url_for('admin_dashboard') }}" class="nav-link text-white active">
+                            📊 Dashboard
+                        </a>
+                        <a href="{{ url_for('admin_businesses') }}" class="nav-link text-white">
+                            🏢 Businesses
+                        </a>
+                        <a href="{{ url_for('admin_users') }}" class="nav-link text-white">
+                            👥 Users
+                        </a>
+                        <a href="{{ url_for('chat') }}" class="nav-link text-white">
+                            🤖 Agent Chat
+                        </a>
+                    </div>
+                </div>
+
+                <div class="p-3 border-top border-secondary">
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline-light w-100">
+                        🚪 Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10">
+            <div class="p-4">
+                <h1 class="mb-4">StreamlineB2B Admin Dashboard</h1>
+
+                <!-- Stats Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Businesses</h5>
+                                <h2 class="mb-0">{{ businesses|length }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Users</h5>
+                                <h2 class="mb-0">{{ user_stats.total_users }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Active Agents</h5>
+                                <h2 class="mb-0">4</h2>
+                                <small>Marketing, Analytics, Content, Admin</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">System Status</h5>
+                                <h2 class="mb-0">✅</h2>
+                                <small>All systems operational</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Quick Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                <a href="{{ url_for('admin_businesses') }}" class="btn btn-primary me-2 mb-2">
+                                    🏢 Manage Businesses
+                                </a>
+                                <a href="{{ url_for('admin_users') }}" class="btn btn-success me-2 mb-2">
+                                    👥 Manage Users
+                                </a>
+                                <a href="{{ url_for('chat') }}" class="btn btn-info me-2 mb-2">
+                                    🤖 Test Agents
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Business Context Switcher</h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted">Switch to any business context to test their agents:</p>
+                                {% for business in businesses %}
+                                <a href="{{ url_for('switch_business', business_id=business.id) }}" 
+                                   class="btn btn-outline-primary btn-sm me-2 mb-2">
+                                    {{ business.name }}
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Businesses Overview -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Businesses Overview</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Business Name</th>
+                                        <th>Email</th>
+                                        <th>Users</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for business in businesses %}
+                                    <tr>
+                                        <td><strong>{{ business.name }}</strong></td>
+                                        <td>{{ business.email }}</td>
+                                        <td>
+                                            <span class="badge bg-primary">{{ business.user_count }} users</span>
+                                        </td>
+                                        <td>{{ business.created_at.strftime('%Y-%m-%d') if business.created_at else 'N/A' }}</td>
+                                        <td>
+                                            <a href="{{ url_for('switch_business', business_id=business.id) }}" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                Switch Context
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Users -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Recent Users</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Business</th>
+                                        <th>Created</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for recent_user in recent_users %}
+                                    <tr>
+                                        <td>{{ recent_user.name }}</td>
+                                        <td>{{ recent_user.email }}</td>
+                                        <td>{{ recent_user.business_name or 'N/A' }}</td>
+                                        <td>{{ recent_user.created_at.strftime('%Y-%m-%d') if recent_user.created_at else 'N/A' }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.sidebar {
+    height: calc(100vh - 80px);
+    position: sticky;
+    top: 80px;
+}
+
+.nav-link.active {
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 5px;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}
