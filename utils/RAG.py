@@ -1,6 +1,7 @@
 import os
 import psycopg2
 from dotenv import load_dotenv
+from pdf_chunker import embed_query
 
 load_dotenv()
 DB_URL = os.getenv('DATABASE_URL')
@@ -21,12 +22,12 @@ def pull_data_from_db(query: str, table: str) -> list[dict]:
     conn = psycopg2.connect(DB_URL)
     cur = conn.cursor()
     
-    cur.execute("""
-    SELECT text_content FROM {table} ORDER BY embedding <-> LIMIT 2
+    embedding = embed_query(query)
+
+    cur.execute(f"""
+    SELECT text_content FROM {table} ORDER BY embedding <-> '{embedding}' LIMIT 2
     """)
     result = cur.fetchall()
-
-    print(result)
 
     cur.close()
     conn.close()
@@ -34,4 +35,9 @@ def pull_data_from_db(query: str, table: str) -> list[dict]:
 
 
 def main():
-    print(pull_data_from_db("What is the total distance of the course?", ""))
+    print(pull_data_from_db("What is the total distance of the course?", "embeddings"))
+
+if __name__ == "__main__":
+    main()
+
+    
