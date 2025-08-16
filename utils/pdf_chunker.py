@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+
+from utils.supa import SupabaseClient
+
 """
 Simple PDF Parser and Text Chunker
 - Accepts a single PDF file path OR a directory containing PDFs
@@ -25,7 +28,7 @@ def extract_text_from_pdf(pdf_path: Path) -> str:
     return "\n".join(text_parts).strip()
 
 
-def chunk_text(text: str, chunk_size: int = 250, overlap: int = 50):
+def chunk_text(text: str, chunk_size: int = 50, overlap: int = 10):
     """
     Split text into overlapping chunks of words.
     - chunk_size: number of WORDS per chunk
@@ -70,12 +73,8 @@ def embed_chunks(chunks: list[dict]):
 
 
 
-def upload_to_supabase(pdf_path: Path):
+def upload_to_supabase(pdf_path: Path, table_name: str):
     """Upload pdf chunks and embeddings to Supabase."""
-    import psycopg2
-    from dotenv import load_dotenv
-    
-    load_dotenv()
     
     # Process PDF
     text = extract_text_from_pdf(pdf_path)
@@ -88,15 +87,14 @@ def upload_to_supabase(pdf_path: Path):
     embeddings = embed_chunks(chunks)
     
     # Connect to database
-    conn = psycopg2.connect(os.getenv('DATABASE_URL'))
-    cur = conn.cursor()
+    supabase = SupabaseClient(customer_schema="Legends")
     
     try:
         # Insert chunks and embeddings into single table
         for i, chunk in enumerate(chunks):
             embedding_data = embeddings.data[i]
-            cur.execute("""
-                INSERT INTO embeddings 
+            supabase.cur.execute("""
+                INSERT INTO {supabase.customer_schema}.{table_name}  
                 (index, embedding, source_file, chunk_number, text_content, created_at)
                 VALUES (%s, %s, %s, %s, %s, NOW())
             """, (
@@ -107,15 +105,14 @@ def upload_to_supabase(pdf_path: Path):
                 chunk['text']
             ))
         
-        conn.commit()
+        supabase.commit()
         print(f"Successfully uploaded {len(chunks)} chunks and embeddings")
         
     except Exception as e:
-        conn.rollback()
+        supabase.conn.rollback()
         print(f"Error uploading to database: {e}")
     finally:
-        cur.close()
-        conn.close()
+        supabase.close()
 
 
 

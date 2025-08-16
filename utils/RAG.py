@@ -1,26 +1,35 @@
 import os
 import psycopg2
 from dotenv import load_dotenv
-from pdf_chunker import embed_query
+from utils.pdf_chunker import embed_chunks
+from openai import OpenAI
+from utils.supa import SupabaseClient
 
 load_dotenv()
-DB_URL = os.getenv('DATABASE_URL')
+
+def embed_query(query: str):
+    client = OpenAI()
+    embeddings = client.embeddings.create(
+        input=query,
+        model="text-embedding-3-large"
+    )
+    return embeddings.data[0].embedding
+
 
 def list_tables():
-    conn = psycopg2.connect(DB_URL)
-    cur = conn.cursor()
+    supabase = SupabaseClient()
+    cur = supabase.cur
     cur.execute("""
     SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'
     """)
     result = cur.fetchall()
-    cur.close()
-    conn.close()
+    supabase.close()
     return result
 
 
 def pull_data_from_db(query: str, table: str) -> list[dict]:
-    conn = psycopg2.connect(DB_URL)
-    cur = conn.cursor()
+    supabase = SupabaseClient()
+    cur = supabase.cur
     
     embedding = embed_query(query)
 
@@ -29,8 +38,7 @@ def pull_data_from_db(query: str, table: str) -> list[dict]:
     """)
     result = cur.fetchall()
 
-    cur.close()
-    conn.close()
+    supabase.close()
     return result
 
 
