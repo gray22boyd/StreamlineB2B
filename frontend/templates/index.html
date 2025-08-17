@@ -15,11 +15,8 @@
                 </p>
                 
                 <div class="hero-buttons mt-5">
-                    <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg me-3">
+                    <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">
                         <i class="fas fa-sign-in-alt me-2"></i>Access Platform
-                    </a>
-                    <a href="{{ url_for('login') }}" class="btn btn-light btn-lg">
-                        <i class="fas fa-rocket me-2"></i>Get Started
                     </a>
                 </div>
             </div>
@@ -241,12 +238,9 @@
     
     .hero-buttons .btn {
         display: block;
-        margin-bottom: 15px;
+        margin: 0 auto;
         width: 100%;
-    }
-    
-    .hero-buttons .me-3 {
-        margin-right: 0 !important;
+        max-width: 300px;
     }
 }
 </style>
