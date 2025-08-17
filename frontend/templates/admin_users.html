@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Admin Sidebar -->
+        <div class="col-md-3 col-lg-2 bg-dark text-white sidebar">
+            <div class="d-flex flex-column h-100">
+                <div class="p-3 border-bottom border-secondary">
+                    <h5 class="mb-0">🛠️ Admin Panel</h5>
+                    <small class="text-muted">{{ user.name }}</small>
+                </div>
+
+                <div class="flex-grow-1 p-3">
+                    <div class="nav flex-column">
+                        <a href="{{ url_for('admin_dashboard') }}" class="nav-link text-white">
+                            📊 Dashboard
+                        </a>
+                        <a href="{{ url_for('admin_businesses') }}" class="nav-link text-white">
+                            🏢 Businesses
+                        </a>
+                        <a href="{{ url_for('admin_users') }}" class="nav-link text-white active">
+                            👥 Users
+                        </a>
+                        <a href="{{ url_for('chat') }}" class="nav-link text-white">
+                            🤖 Agent Chat
+                        </a>
+                    </div>
+                </div>
+
+                <div class="p-3 border-top border-secondary">
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline-light w-100">
+                        🚪 Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10">
+            <div class="p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Manage Users</h1>
+                    <div>
+                        <span class="badge bg-success fs-6">{{ users|length }} Total Users</span>
+                    </div>
+                </div>
+
+                <!-- Instructions Card -->
+                <div class="card mb-4 border-success">
+                    <div class="card-body">
+                        <h5 class="card-title text-success">👤 Add New User</h5>
+                        <p class="card-text">
+                            To create a new user account, run this SQL (replace with actual values):
+                        </p>
+                        <code class="d-block bg-light p-2 rounded small">
+-- Generate password hash first:<br>
+-- python3 -c "import bcrypt; print(bcrypt.hashpw('password123'.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'))"<br><br>
+-- Create user:<br>
+INSERT INTO users (email, password_hash, name, business_id, role) VALUES <br>
+('user@business.com', '$2b$12$hash_here', 'User Name', 'business-uuid-here', 'user');<br><br>
+-- Assign agents:<br>
+INSERT INTO user_agents (user_id, agent_type) VALUES <br>
+((SELECT id FROM users WHERE email = 'user@business.com'), 'marketing'),<br>
+((SELECT id FROM users WHERE email = 'user@business.com'), 'analytics');
+                        </code>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">All Users</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>User Info</th>
+                                        <th>Business</th>
+                                        <th>Role</th>
+                                        <th>Agents</th>
+                                        <th>Status</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user_item in users %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ user_item.name }}</strong><br>
+                                            <small class="text-muted">{{ user_item.email }}</small><br>
+                                            <small class="text-muted">ID: {{ user_item.id }}</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info">{{ user_item.business_name or 'No Business' }}</span>
+                                        </td>
+                                        <td>
+                                            {% if user_item.role == 'admin' %}
+                                                <span class="badge bg-warning">👑 {{ user_item.role|title }}</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ user_item.role|title }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if user_item.agents and user_item.agents[0] %}
+                                                {% for agent in user_item.agents %}
+                                                    {% if agent %}
+                                                        <span class="badge bg-primary me-1">{{ agent }}</span>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                <span class="text-muted">No agents</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if user_item.is_active %}
+                                                <span class="badge bg-success">✅ Active</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">❌ Inactive</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ user_item.created_at.strftime('%Y-%m-%d') if user_item.created_at else 'N/A' }}</td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-outline-info" 
+                                                        onclick="showUserDetails('{{ user_item.id }}', '{{ user_item.name }}', '{{ user_item.email }}')">
+                                                    📋 Details
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning" 
+                                                        onclick="showPasswordReset('{{ user_item.email }}')">
+                                                    🔑 Reset PW
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.sidebar {
+    height: calc(100vh - 80px);
+    position: sticky;
+    top: 80px;
+}
+
+.nav-link.active {
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 5px;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+</style>
+
+<script>
+function showUserDetails(userId, userName, userEmail) {
+    alert(`User: ${userName}\nEmail: ${userEmail}\nID: ${userId}\n\nUse this ID for database operations.`);
+}
+
+function showPasswordReset(userEmail) {
+    const newPassword = prompt(`Reset password for ${userEmail}\n\nEnter new password:`);
+    if (newPassword) {
+        alert(`To reset password, run this SQL:\n\n-- Generate hash first:\n-- python3 -c "import bcrypt; print(bcrypt.hashpw('${newPassword}'.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'))"\n\n-- Update user:\nUPDATE users SET password_hash = '$2b$12$NEW_HASH_HERE' WHERE email = '${userEmail}';`);
+    }
+}
+</script>
+{% endblock %}
