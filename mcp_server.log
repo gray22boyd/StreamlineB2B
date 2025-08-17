@@ -1,0 +1,248 @@
+2025-08-14 12:18:49,433 - INFO - Starting MCP Server from: C:\Users\gray2\Downloads\StreamlineAgents\agents\marketing_agent\mcp_server.py
+2025-08-14 12:18:49,433 - INFO - Python path: ['C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\DLLs', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32\\lib', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\Pythonwin', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent']
+2025-08-14 12:18:49,433 - INFO - Working directory: C:\Users\gray2\Downloads\StreamlineAgents
+2025-08-14 12:18:49,757 - INFO - Successfully imported FacebookMarketingTools
+2025-08-14 12:18:50,519 - ERROR - MCP package not installed: cannot import name 'ToolCall' from 'mcp.types' (C:\Users\gray2\Downloads\StreamlineAgents\.venv\Lib\site-packages\mcp\types.py)
+2025-08-14 12:18:50,519 - INFO - Script started with args: ['agents/marketing_agent/mcp_server.py', '--stdio']
+2025-08-14 12:18:50,519 - INFO - Running in stdio mode
+2025-08-14 12:18:50,519 - DEBUG - Using proactor: IocpProactor
+2025-08-14 12:18:50,520 - INFO - Starting stdio server mode
+2025-08-14 12:18:50,520 - ERROR - MCP stdio server requires the `mcp` Python package.
+2025-08-14 12:19:22,907 - INFO - Starting MCP Server from: C:\Users\gray2\Downloads\StreamlineAgents\agents\marketing_agent\mcp_server.py
+2025-08-14 12:19:22,907 - INFO - Python path: ['C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\DLLs', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32\\lib', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\Pythonwin', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent']
+2025-08-14 12:19:22,907 - INFO - Working directory: C:\Users\gray2\Downloads\StreamlineAgents
+2025-08-14 12:19:23,139 - INFO - Successfully imported FacebookMarketingTools
+2025-08-14 12:19:23,478 - INFO - Successfully imported MCP modules
+2025-08-14 12:19:23,479 - INFO - Script started with args: ['agents/marketing_agent/mcp_server.py', '--stdio']
+2025-08-14 12:19:23,479 - INFO - Running in stdio mode
+2025-08-14 12:19:23,479 - DEBUG - Using proactor: IocpProactor
+2025-08-14 12:19:23,479 - INFO - Starting stdio server mode
+2025-08-14 12:19:23,479 - DEBUG - Initializing server 'facebook-marketing'
+2025-08-14 12:19:23,479 - DEBUG - Registering handler for ListToolsRequest
+2025-08-14 12:19:23,479 - DEBUG - Registering handler for CallToolRequest
+2025-08-14 12:19:23,479 - INFO - Setting up stdio server...
+2025-08-14 12:19:23,506 - INFO - stdio server running...
+2025-08-14 12:20:01,386 - INFO - Starting MCP Server from: C:\Users\gray2\Downloads\StreamlineAgents\agents\marketing_agent\mcp_server.py
+2025-08-14 12:20:01,386 - INFO - Python path: ['C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\DLLs', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32\\lib', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\Pythonwin', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent']
+2025-08-14 12:20:01,387 - INFO - Working directory: C:\Users\gray2\Downloads\StreamlineAgents
+2025-08-14 12:20:01,615 - INFO - Successfully imported FacebookMarketingTools
+2025-08-14 12:20:01,946 - INFO - Successfully imported MCP modules
+2025-08-14 12:20:01,947 - INFO - Script started with args: ['agents/marketing_agent/mcp_server.py', '--stdio']
+2025-08-14 12:20:01,947 - INFO - Running in stdio mode
+2025-08-14 12:20:01,947 - DEBUG - Using proactor: IocpProactor
+2025-08-14 12:20:01,947 - INFO - Starting stdio server mode
+2025-08-14 12:20:01,947 - DEBUG - Initializing server 'facebook-marketing'
+2025-08-14 12:20:01,948 - DEBUG - Registering handler for ListToolsRequest
+2025-08-14 12:20:01,948 - DEBUG - Registering handler for CallToolRequest
+2025-08-14 12:20:01,948 - INFO - Setting up stdio server...
+2025-08-14 12:20:01,950 - INFO - stdio server running...
+2025-08-14 12:23:07,271 - INFO - Starting MCP Server from: C:\Users\gray2\Downloads\StreamlineAgents\agents\marketing_agent\mcp_server.py
+2025-08-14 12:23:07,271 - INFO - Python path: ['C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\DLLs', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32\\lib', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\Pythonwin', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent']
+2025-08-14 12:23:07,271 - INFO - Working directory: C:\Users\gray2\Downloads\StreamlineAgents
+2025-08-14 12:23:07,509 - INFO - Successfully imported FacebookMarketingTools
+2025-08-14 12:23:07,889 - INFO - Successfully imported MCP modules
+2025-08-14 12:23:07,889 - INFO - Script started with args: ['agents/marketing_agent/mcp_server.py', '--stdio']
+2025-08-14 12:23:07,889 - INFO - Running in stdio mode
+2025-08-14 12:23:07,889 - DEBUG - Using proactor: IocpProactor
+2025-08-14 12:23:07,890 - INFO - Starting stdio server mode
+2025-08-14 12:23:07,890 - DEBUG - Initializing server 'facebook-marketing'
+2025-08-14 12:23:07,890 - DEBUG - Registering handler for ListToolsRequest
+2025-08-14 12:23:07,890 - DEBUG - Registering handler for CallToolRequest
+2025-08-14 12:23:07,890 - INFO - Setting up stdio server...
+2025-08-14 12:23:07,893 - INFO - stdio server running...
+2025-08-14 12:24:24,886 - INFO - Starting MCP Server from: C:\Users\gray2\Downloads\StreamlineAgents\agents\marketing_agent\mcp_server.py
+2025-08-14 12:24:24,886 - INFO - Python path: ['C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\DLLs', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32\\lib', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\Pythonwin', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent']
+2025-08-14 12:24:24,886 - INFO - Working directory: C:\Users\gray2\Downloads\StreamlineAgents
+2025-08-14 12:24:25,118 - INFO - Successfully imported FacebookMarketingTools
+2025-08-14 12:24:25,456 - INFO - Successfully imported MCP modules
+2025-08-14 12:24:25,456 - INFO - Script started with args: ['agents/marketing_agent/mcp_server.py', '--stdio']
+2025-08-14 12:24:25,456 - INFO - Running in stdio mode
+2025-08-14 12:24:25,456 - DEBUG - Using proactor: IocpProactor
+2025-08-14 12:24:25,459 - INFO - Starting stdio server mode
+2025-08-14 12:24:25,459 - DEBUG - Initializing server 'facebook-marketing'
+2025-08-14 12:24:25,459 - DEBUG - Registering handler for ListToolsRequest
+2025-08-14 12:24:25,459 - DEBUG - Registering handler for CallToolRequest
+2025-08-14 12:24:25,459 - INFO - Setting up stdio server...
+2025-08-14 12:24:25,462 - INFO - stdio server running...
+2025-08-14 12:41:40,808 - INFO - Starting MCP Server from: C:\Users\gray2\Downloads\StreamlineAgents\agents\marketing_agent\mcp_server.py
+2025-08-14 12:41:40,808 - INFO - Python path: ['C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\DLLs', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32\\lib', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\Pythonwin', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent']
+2025-08-14 12:41:40,808 - INFO - Working directory: C:\Users\gray2\Downloads\StreamlineAgents
+2025-08-14 12:41:41,036 - INFO - Successfully imported FacebookMarketingTools
+2025-08-14 12:41:41,367 - INFO - Successfully imported MCP modules
+2025-08-14 12:41:41,367 - INFO - Script started with args: ['agents/marketing_agent/mcp_server.py', '--stdio']
+2025-08-14 12:41:41,367 - INFO - Running in stdio mode
+2025-08-14 12:41:41,368 - DEBUG - Using proactor: IocpProactor
+2025-08-14 12:41:41,368 - INFO - Starting stdio server mode
+2025-08-14 12:41:41,368 - DEBUG - Initializing server 'facebook-marketing'
+2025-08-14 12:41:41,368 - DEBUG - Registering handler for ListToolsRequest
+2025-08-14 12:41:41,368 - DEBUG - Registering handler for CallToolRequest
+2025-08-14 12:41:41,369 - INFO - Setting up stdio server...
+2025-08-14 12:41:41,371 - INFO - stdio server running...
+2025-08-14 12:48:46,144 - INFO - Starting MCP Server from: C:\Users\gray2\Downloads\StreamlineAgents\agents\marketing_agent\mcp_server.py
+2025-08-14 12:48:46,144 - INFO - Python path: ['', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\DLLs', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32\\lib', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\Pythonwin', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent']
+2025-08-14 12:48:46,144 - INFO - Working directory: C:\Users\gray2\Downloads\StreamlineAgents
+2025-08-14 12:48:46,381 - INFO - Successfully imported FacebookMarketingTools
+2025-08-14 12:48:46,716 - INFO - Successfully imported MCP modules
+2025-08-14 13:17:14,940 - INFO - Starting MCP Server from: C:\Users\gray2\Downloads\StreamlineAgents\agents\marketing_agent\mcp_server.py
+2025-08-14 13:17:14,940 - INFO - Python path: ['C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\DLLs', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32\\lib', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\Pythonwin', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent']
+2025-08-14 13:17:14,941 - INFO - Working directory: C:\Users\gray2\Downloads\StreamlineAgents
+2025-08-14 13:17:15,173 - INFO - Successfully imported FacebookMarketingTools
+2025-08-14 13:17:15,517 - INFO - Successfully imported MCP modules
+2025-08-14 13:17:15,517 - INFO - Script started with args: ['C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent\\mcp_server.py', '--stdio']
+2025-08-14 13:17:15,517 - INFO - Running in stdio mode
+2025-08-14 13:17:15,517 - DEBUG - Using proactor: IocpProactor
+2025-08-14 13:17:15,518 - INFO - Starting stdio server mode
+2025-08-14 13:17:15,518 - DEBUG - Initializing server 'facebook-marketing'
+2025-08-14 13:17:15,518 - DEBUG - Registering handler for ListToolsRequest
+2025-08-14 13:17:15,518 - DEBUG - Registering handler for CallToolRequest
+2025-08-14 13:17:15,518 - INFO - Setting up stdio server...
+2025-08-14 13:17:15,521 - INFO - stdio server running...
+2025-08-14 13:18:52,605 - INFO - Starting MCP Server from: C:\Users\gray2\Downloads\StreamlineAgents\agents\marketing_agent\mcp_server.py
+2025-08-14 13:18:52,605 - INFO - Python path: ['C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\DLLs', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32\\lib', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\Pythonwin', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent']
+2025-08-14 13:18:52,605 - INFO - Working directory: C:\Users\gray2\Downloads\StreamlineAgents
+2025-08-14 13:18:52,835 - INFO - Successfully imported FacebookMarketingTools
+2025-08-14 13:18:53,167 - INFO - Successfully imported MCP modules
+2025-08-14 13:18:53,167 - INFO - Script started with args: ['C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent\\mcp_server.py', '--stdio']
+2025-08-14 13:18:53,167 - INFO - Running in stdio mode
+2025-08-14 13:18:53,168 - DEBUG - Using proactor: IocpProactor
+2025-08-14 13:18:53,168 - INFO - Starting stdio server mode
+2025-08-14 13:18:53,168 - DEBUG - Initializing server 'facebook-marketing'
+2025-08-14 13:18:53,168 - DEBUG - Registering handler for ListToolsRequest
+2025-08-14 13:18:53,168 - DEBUG - Registering handler for CallToolRequest
+2025-08-14 13:18:53,168 - INFO - Setting up stdio server...
+2025-08-14 13:18:53,171 - INFO - stdio server running...
+2025-08-14 15:02:28,675 - INFO - Starting MCP Server from: C:\Users\gray2\Downloads\StreamlineAgents\agents\marketing_agent\mcp_server.py
+2025-08-14 15:02:28,675 - INFO - Python path: ['C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\DLLs', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\win32', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\win32\\lib', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\Pythonwin', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent']
+2025-08-14 15:02:28,675 - INFO - Working directory: C:\Users\gray2\Downloads\StreamlineAgents
+2025-08-14 15:02:28,822 - INFO - Successfully imported FacebookMarketingTools
+2025-08-14 15:02:29,694 - INFO - Successfully imported MCP modules
+2025-08-14 15:02:29,694 - INFO - Script started with args: ['agents/marketing_agent/mcp_server.py']
+2025-08-14 15:02:29,694 - INFO - Running in HTTP mode
+2025-08-14 15:05:36,618 - INFO - Starting MCP Server from: C:\Users\gray2\Downloads\StreamlineAgents\agents\marketing_agent\mcp_server.py
+2025-08-14 15:05:36,618 - INFO - Python path: ['C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\DLLs', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\win32', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\win32\\lib', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\Pythonwin', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent']
+2025-08-14 15:05:36,618 - INFO - Working directory: C:\Users\gray2\Downloads\StreamlineAgents
+2025-08-14 15:05:36,704 - INFO - Successfully imported FacebookMarketingTools
+2025-08-14 15:05:37,150 - INFO - Successfully imported MCP modules
+2025-08-14 15:05:37,150 - INFO - Script started with args: ['agents/marketing_agent/mcp_server.py']
+2025-08-14 15:05:37,152 - INFO - Running in HTTP mode
+2025-08-14 15:19:52,399 - INFO - Starting MCP Server from: C:\Users\gray2\Downloads\StreamlineAgents\agents\marketing_agent\mcp_server.py
+2025-08-14 15:19:52,399 - INFO - Python path: ['C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\DLLs', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32\\lib', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\Pythonwin', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent']
+2025-08-14 15:19:52,399 - INFO - Working directory: C:\Users\gray2\Downloads\StreamlineAgents
+2025-08-14 15:19:52,646 - INFO - Successfully imported FacebookMarketingTools
+2025-08-14 15:19:53,180 - INFO - Successfully imported MCP modules
+2025-08-14 15:19:53,180 - INFO - Script started with args: ['C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent\\mcp_server.py']
+2025-08-14 15:19:53,180 - INFO - Running in HTTP mode
+2025-08-14 15:20:15,979 - INFO - Starting MCP Server from: C:\Users\gray2\Downloads\StreamlineAgents\agents\marketing_agent\mcp_server.py
+2025-08-14 15:20:15,979 - INFO - Python path: ['C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\DLLs', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32\\lib', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\Pythonwin', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent']
+2025-08-14 15:20:15,979 - INFO - Working directory: C:\Users\gray2\Downloads\StreamlineAgents
+2025-08-14 15:20:16,212 - INFO - Successfully imported FacebookMarketingTools
+2025-08-14 15:20:16,537 - INFO - Successfully imported MCP modules
+2025-08-14 15:20:16,537 - INFO - Script started with args: ['agents/marketing_agent/mcp_server.py']
+2025-08-14 15:20:16,537 - INFO - Running in HTTP mode
+2025-08-14 15:22:22,113 - INFO - Calling tool: list_pages with args: {'business_id': 'cfbfa01d-6344-4823-b67a-ad0a702e7d61'}
+2025-08-14 15:22:22,698 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 15:22:22,700 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 15:22:22,883 - DEBUG - https://graph.facebook.com:443 "GET /v18.0/791220820733490?fields=id%2Cname%2Ccategory%2Cfollowers_count%2Cfan_count&access_token=EAAPlCYbMWfsBPMVHN4yUP8urZC3HmmTg3BCyCMvYInCyPhoM5ZAPp9YqtY60ZCdRT3QCe7rKBCWfVApxp3QMS69Br24bZAtddWy5O3R3ZCZAb71StbLduMoiMjd1FTPLL1ZBYZCikmv6lOd7ncFlVNBATaoLY2BvbZCccMBpEkko4AKfZCZBAeyHuTInb8E6wbYabAi8jjt6DGBBdceKC9hYwMwk1xJOW4sZCrZBz415wWnkZD HTTP/1.1" 400 260
+2025-08-14 15:22:25,406 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 15:22:25,407 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 15:22:25,489 - DEBUG - https://graph.facebook.com:443 "POST /v18.0/791220820733490/feed HTTP/1.1" 400 260
+2025-08-14 15:22:27,958 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 15:22:27,959 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 15:22:28,076 - DEBUG - https://graph.facebook.com:443 "POST /v18.0/791220820733490/photos HTTP/1.1" 400 260
+2025-08-14 15:22:30,139 - INFO - Calling tool: list_pages with args: {'business_id': 'cfbfa01d-6344-4823-b67a-ad0a702e7d61'}
+2025-08-14 15:22:30,561 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 15:22:30,562 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 15:22:30,643 - DEBUG - https://graph.facebook.com:443 "GET /v18.0/791220820733490?fields=id%2Cname%2Ccategory%2Cfollowers_count%2Cfan_count&access_token=EAAPlCYbMWfsBPMVHN4yUP8urZC3HmmTg3BCyCMvYInCyPhoM5ZAPp9YqtY60ZCdRT3QCe7rKBCWfVApxp3QMS69Br24bZAtddWy5O3R3ZCZAb71StbLduMoiMjd1FTPLL1ZBYZCikmv6lOd7ncFlVNBATaoLY2BvbZCccMBpEkko4AKfZCZBAeyHuTInb8E6wbYabAi8jjt6DGBBdceKC9hYwMwk1xJOW4sZCrZBz415wWnkZD HTTP/1.1" 400 260
+2025-08-14 15:22:33,143 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 15:22:33,145 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 15:22:33,232 - DEBUG - https://graph.facebook.com:443 "POST /v18.0/791220820733490/feed HTTP/1.1" 400 260
+2025-08-14 15:22:35,705 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 15:22:35,705 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 15:22:35,796 - DEBUG - https://graph.facebook.com:443 "POST /v18.0/791220820733490/photos HTTP/1.1" 400 260
+2025-08-14 15:22:39,895 - INFO - Calling tool: list_pages with args: {'business_id': 'cfbfa01d-6344-4823-b67a-ad0a702e7d61'}
+2025-08-14 15:22:40,327 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 15:22:40,329 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 15:22:40,432 - DEBUG - https://graph.facebook.com:443 "GET /v18.0/791220820733490?fields=id%2Cname%2Ccategory%2Cfollowers_count%2Cfan_count&access_token=EAAPlCYbMWfsBPMVHN4yUP8urZC3HmmTg3BCyCMvYInCyPhoM5ZAPp9YqtY60ZCdRT3QCe7rKBCWfVApxp3QMS69Br24bZAtddWy5O3R3ZCZAb71StbLduMoiMjd1FTPLL1ZBYZCikmv6lOd7ncFlVNBATaoLY2BvbZCccMBpEkko4AKfZCZBAeyHuTInb8E6wbYabAi8jjt6DGBBdceKC9hYwMwk1xJOW4sZCrZBz415wWnkZD HTTP/1.1" 400 260
+2025-08-14 15:22:45,278 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 15:22:45,278 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 15:22:45,360 - DEBUG - https://graph.facebook.com:443 "POST /v18.0/791220820733490/feed HTTP/1.1" 400 260
+2025-08-14 15:22:50,854 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 15:22:50,854 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 15:22:50,939 - DEBUG - https://graph.facebook.com:443 "POST /v18.0/791220820733490/photos HTTP/1.1" 400 260
+2025-08-14 15:42:43,175 - INFO - Calling tool: post_text with args: {'business_id': 'cfbfa01d-6344-4823-b67a-ad0a702e7d61', 'message': 'FREE DRINKS TONIGHT'}
+2025-08-14 15:42:43,648 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 15:42:43,650 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 15:42:43,772 - DEBUG - https://graph.facebook.com:443 "POST /v18.0/791220820733490/feed HTTP/1.1" 400 260
+2025-08-14 16:32:09,154 - INFO - Calling tool: list_pages with args: {'business_id': 'cfbfa01d-6344-4823-b67a-ad0a702e7d61'}
+2025-08-14 16:32:09,600 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 16:32:09,601 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 16:32:10,114 - DEBUG - https://graph.facebook.com:443 "GET /v18.0/791220820733490?fields=id%2Cname%2Ccategory%2Cfollowers_count%2Cfan_count&access_token=EAAPlCYbMWfsBPB7HmVDdU5uNCVpRn1WojkDepEiDZAHfIVkHSPvnkb0Fbl5QKhXxK4QzRm63Iy4Ant11Wr0EduWDpfyF4gHY741V2kKvUhJtmBK2WFJu6HPToZA9zUkCLwm03lisiNd5lZA6REQBVieb7kZBxYOl3eM0VpEcoUeaT1IEZBGbMbX3htxbuDROloZBaU7a7b5DKe4i5ZCbQMGrGu3l19aQJh258n6jbrz HTTP/1.1" 200 109
+2025-08-14 16:32:12,584 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 16:32:12,584 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 16:32:14,506 - DEBUG - https://graph.facebook.com:443 "POST /v18.0/791220820733490/feed HTTP/1.1" 200 43
+2025-08-14 16:32:16,997 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 16:32:16,998 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 16:32:22,114 - DEBUG - https://graph.facebook.com:443 "POST /v18.0/791220820733490/photos HTTP/1.1" 200 74
+2025-08-14 16:32:24,158 - INFO - Calling tool: list_pages with args: {'business_id': 'cfbfa01d-6344-4823-b67a-ad0a702e7d61'}
+2025-08-14 16:32:24,587 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 16:32:24,589 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 16:32:24,816 - DEBUG - https://graph.facebook.com:443 "GET /v18.0/791220820733490?fields=id%2Cname%2Ccategory%2Cfollowers_count%2Cfan_count&access_token=EAAPlCYbMWfsBPB7HmVDdU5uNCVpRn1WojkDepEiDZAHfIVkHSPvnkb0Fbl5QKhXxK4QzRm63Iy4Ant11Wr0EduWDpfyF4gHY741V2kKvUhJtmBK2WFJu6HPToZA9zUkCLwm03lisiNd5lZA6REQBVieb7kZBxYOl3eM0VpEcoUeaT1IEZBGbMbX3htxbuDROloZBaU7a7b5DKe4i5ZCbQMGrGu3l19aQJh258n6jbrz HTTP/1.1" 200 109
+2025-08-14 16:32:27,267 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 16:32:27,268 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 16:32:28,663 - DEBUG - https://graph.facebook.com:443 "POST /v18.0/791220820733490/feed HTTP/1.1" 200 43
+2025-08-14 16:32:31,125 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 16:32:31,125 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 16:32:35,489 - DEBUG - https://graph.facebook.com:443 "POST /v18.0/791220820733490/photos HTTP/1.1" 200 74
+2025-08-14 16:32:40,292 - INFO - Calling tool: list_pages with args: {'business_id': 'cfbfa01d-6344-4823-b67a-ad0a702e7d61'}
+2025-08-14 16:32:40,753 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 16:32:40,754 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 16:32:40,979 - DEBUG - https://graph.facebook.com:443 "GET /v18.0/791220820733490?fields=id%2Cname%2Ccategory%2Cfollowers_count%2Cfan_count&access_token=EAAPlCYbMWfsBPB7HmVDdU5uNCVpRn1WojkDepEiDZAHfIVkHSPvnkb0Fbl5QKhXxK4QzRm63Iy4Ant11Wr0EduWDpfyF4gHY741V2kKvUhJtmBK2WFJu6HPToZA9zUkCLwm03lisiNd5lZA6REQBVieb7kZBxYOl3eM0VpEcoUeaT1IEZBGbMbX3htxbuDROloZBaU7a7b5DKe4i5ZCbQMGrGu3l19aQJh258n6jbrz HTTP/1.1" 200 109
+2025-08-14 16:32:46,102 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 16:32:46,103 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 16:32:47,378 - DEBUG - https://graph.facebook.com:443 "POST /v18.0/791220820733490/feed HTTP/1.1" 200 43
+2025-08-14 16:32:53,347 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 16:32:53,348 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 16:32:57,948 - DEBUG - https://graph.facebook.com:443 "POST /v18.0/791220820733490/photos HTTP/1.1" 200 74
+2025-08-14 16:34:10,001 - INFO - Calling tool: post_text with args: {'business_id': 'cfbfa01d-6344-4823-b67a-ad0a702e7d61', 'message': 'Streamline , Wagmi'}
+2025-08-14 16:34:10,483 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 16:34:10,484 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 16:34:11,997 - DEBUG - https://graph.facebook.com:443 "POST /v18.0/791220820733490/feed HTTP/1.1" 200 43
+2025-08-14 16:38:41,100 - INFO - Starting MCP Server from: C:\Users\gray2\Downloads\StreamlineAgents\agents\marketing_agent\mcp_server.py
+2025-08-14 16:38:41,100 - INFO - Python path: ['C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\DLLs', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32\\lib', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\Pythonwin', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent']
+2025-08-14 16:38:41,100 - INFO - Working directory: C:\Users\gray2\Downloads\StreamlineAgents
+2025-08-14 16:38:41,439 - INFO - Successfully imported FacebookMarketingTools
+2025-08-14 16:38:41,908 - INFO - Successfully imported MCP modules
+2025-08-14 16:38:41,908 - INFO - Script started with args: ['C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent\\mcp_server.py']
+2025-08-14 16:38:41,908 - INFO - Running in HTTP mode
+2025-08-14 16:39:14,479 - INFO - Starting MCP Server from: C:\Users\gray2\Downloads\StreamlineAgents\agents\marketing_agent\mcp_server.py
+2025-08-14 16:39:14,479 - INFO - Python path: ['C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\DLLs', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312\\Lib', 'C:\\Users\\gray2\\AppData\\Local\\Programs\\Python\\Python312', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\win32\\lib', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\.venv\\Lib\\site-packages\\Pythonwin', 'C:\\Users\\gray2\\Downloads\\StreamlineAgents\\agents\\marketing_agent']
+2025-08-14 16:39:14,479 - INFO - Working directory: C:\Users\gray2\Downloads\StreamlineAgents
+2025-08-14 16:39:14,806 - INFO - Successfully imported FacebookMarketingTools
+2025-08-14 16:39:15,238 - INFO - Successfully imported MCP modules
+2025-08-14 16:39:15,238 - INFO - Script started with args: ['agents/marketing_agent/mcp_server.py']
+2025-08-14 16:39:15,238 - INFO - Running in HTTP mode
+2025-08-14 16:40:31,182 - INFO - Calling tool: list_pages with args: {'business_id': 'cfbfa01d-6344-4823-b67a-ad0a702e7d61'}
+2025-08-14 16:40:31,679 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 16:40:31,681 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 16:40:31,925 - DEBUG - https://graph.facebook.com:443 "GET /v18.0/791220820733490?fields=id%2Cname%2Ccategory%2Cfollowers_count%2Cfan_count&access_token=EAAPlCYbMWfsBPB7HmVDdU5uNCVpRn1WojkDepEiDZAHfIVkHSPvnkb0Fbl5QKhXxK4QzRm63Iy4Ant11Wr0EduWDpfyF4gHY741V2kKvUhJtmBK2WFJu6HPToZA9zUkCLwm03lisiNd5lZA6REQBVieb7kZBxYOl3eM0VpEcoUeaT1IEZBGbMbX3htxbuDROloZBaU7a7b5DKe4i5ZCbQMGrGu3l19aQJh258n6jbrz HTTP/1.1" 200 109
+2025-08-14 16:42:19,220 - INFO - Calling tool: list_pages with args: {'business_id': 'cfbfa01d-6344-4823-b67a-ad0a702e7d61'}
+2025-08-14 16:42:19,732 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 16:42:19,733 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 16:42:19,974 - DEBUG - https://graph.facebook.com:443 "GET /v18.0/791220820733490?fields=id%2Cname%2Ccategory%2Cfollowers_count%2Cfan_count&access_token=EAAPlCYbMWfsBPB7HmVDdU5uNCVpRn1WojkDepEiDZAHfIVkHSPvnkb0Fbl5QKhXxK4QzRm63Iy4Ant11Wr0EduWDpfyF4gHY741V2kKvUhJtmBK2WFJu6HPToZA9zUkCLwm03lisiNd5lZA6REQBVieb7kZBxYOl3eM0VpEcoUeaT1IEZBGbMbX3htxbuDROloZBaU7a7b5DKe4i5ZCbQMGrGu3l19aQJh258n6jbrz HTTP/1.1" 200 109
+2025-08-14 16:42:54,820 - INFO - Calling tool: post_text with args: {'business_id': 'cfbfa01d-6344-4823-b67a-ad0a702e7d61', 'message': 'Pull up to the crib, BYOB'}
+2025-08-14 16:42:55,268 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 16:42:55,269 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 16:42:56,981 - DEBUG - https://graph.facebook.com:443 "POST /v18.0/791220820733490/feed HTTP/1.1" 200 43
+2025-08-14 19:28:59,771 - INFO - Calling tool: list_pages with args: {'business_id': 'cfbfa01d-6344-4823-b67a-ad0a702e7d61'}
+2025-08-14 19:29:00,231 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 19:29:00,235 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 19:29:01,192 - DEBUG - https://graph.facebook.com:443 "GET /v18.0/791220820733490?fields=id%2Cname%2Ccategory%2Cfollowers_count%2Cfan_count&access_token=EAAPlCYbMWfsBPAMd4fXGEpD6Nzrjx2SZBJRoIh8W9osWZBpqZBTJvgU00qkgnEQ9zO21OQheg1YoeRbL4KWEoKNA2f9nUcaGMYqmZBH0aAnmQ0Erz068W6ZCzxbRmTZC8RFWQmogA608ZAQTGcVToCUqTQYsATsoEaZAWZBJQiM7vSmehOcFbZBxAcVEmr8wnK6iU2kpwxlk136Yo72sUHvGtLZAhX36ZCOIUdUwSz6tgILNlWEZD HTTP/1.1" 200 109
+2025-08-14 19:35:52,595 - INFO - Calling tool: list_pages with args: {'business_id': 'cfbfa01d-6344-4823-b67a-ad0a702e7d61'}
+2025-08-14 19:35:53,074 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 19:35:53,076 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 19:35:54,377 - DEBUG - https://graph.facebook.com:443 "GET /v18.0/791220820733490?fields=id%2Cname%2Ccategory%2Cfollowers_count%2Cfan_count&access_token=EAAPlCYbMWfsBPAMd4fXGEpD6Nzrjx2SZBJRoIh8W9osWZBpqZBTJvgU00qkgnEQ9zO21OQheg1YoeRbL4KWEoKNA2f9nUcaGMYqmZBH0aAnmQ0Erz068W6ZCzxbRmTZC8RFWQmogA608ZAQTGcVToCUqTQYsATsoEaZAWZBJQiM7vSmehOcFbZBxAcVEmr8wnK6iU2kpwxlk136Yo72sUHvGtLZAhX36ZCOIUdUwSz6tgILNlWEZD HTTP/1.1" 200 109
+2025-08-14 19:36:15,410 - INFO - Calling tool: post_text with args: {'business_id': 'cfbfa01d-6344-4823-b67a-ad0a702e7d61', 'message': 'free drinks on friday'}
+2025-08-14 19:36:15,841 - INFO - Created FacebookMarketingTools for business: cfbfa01d-6344-4823-b67a-ad0a702e7d61
+2025-08-14 19:36:15,842 - DEBUG - Starting new HTTPS connection (1): graph.facebook.com:443
+2025-08-14 19:36:45,984 - DEBUG - https://graph.facebook.com:443 "POST /v18.0/791220820733490/feed HTTP/1.1" 500 77
+2025-08-14 19:36:45,986 - ERROR - HTTP handler error: [WinError 10053] An established connection was aborted by the software in your host machine
