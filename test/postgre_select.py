@@ -2,23 +2,28 @@ import os
 import psycopg2
 from dotenv import load_dotenv
 from utils.supa import SupabaseClient
+from utils.pdf_chunker import process_pdf
 
 load_dotenv()
 
 
+def test_gather_tables():
+    supabase = SupabaseClient(customer_schema="Legends")
+    cur = supabase.cur
 
-supabase = SupabaseClient()
-cur = supabase.cur
+    print(f"✅ Connected to Supabase!")
 
-cur.execute("SELECT version();")
-version = cur.fetchone()
-print(f"✅ Connected to Supabase!")
-print(f"PostgreSQL version: {version[0][:50]}...")
+    result = supabase.gather_tables()
+    supabase.close()
+    return result
 
-cur.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';")
-print(cur.fetchall())
+def test_upload_to_table(pdf_path: str):
+    supabase = SupabaseClient(customer_schema="Legends")
+    chunks, embeddings = process_pdf(pdf_path)
 
-supabase.close()
+    supabase.upload_to_table(table_name="embeddings", data=chunks)
+
+print(test_gather_tables())
 
 
 

@@ -68,10 +68,13 @@ def embed_chunks(chunks: list[dict]):
         input=[chunk['text'] for chunk in chunks],
         model="text-embedding-3-large"
     )
-
     return embeddings
 
-
+def process_pdf(pdf_path: Path):
+    text = extract_text_from_pdf(pdf_path)
+    chunks = chunk_text(text)
+    embeddings = embed_chunks(chunks)
+    return chunks, embeddings
 
 def upload_to_supabase(pdf_path: Path, table_name: str):
     """Upload pdf chunks and embeddings to Supabase."""
