@@ -1,0 +1,342 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - StreamlineB2B{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Admin Sidebar -->
+        <div class="col-md-3 col-lg-2 bg-dark text-white sidebar">
+            <div class="d-flex flex-column h-100">
+                <div class="p-3 border-bottom border-secondary">
+                    <h5 class="mb-0">🛠️ Admin Panel</h5>
+                    <small class="text-muted">{{ user.name }}</small>
+                </div>
+
+                <div class="flex-grow-1 p-3">
+                    <div class="nav flex-column">
+                        <a href="{{ url_for('admin_dashboard') }}" class="nav-link text-white active">
+                            📊 Dashboard
+                        </a>
+                        <a href="{{ url_for('admin_businesses') }}" class="nav-link text-white">
+                            🏢 Businesses
+                        </a>
+                        <a href="{{ url_for('admin_users') }}" class="nav-link text-white">
+                            👥 Users
+                        </a>
+                        <a href="{{ url_for('chat') }}" class="nav-link text-white">
+                            🤖 Agent Chat
+                        </a>
+                    </div>
+                </div>
+
+                <div class="p-3 border-top border-secondary">
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline-light w-100">
+                        🚪 Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10">
+            <div class="p-4">
+                <h1 class="mb-4">StreamlineB2B Admin Dashboard</h1>
+
+                <!-- Stats Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="stat-card bg-primary">
+                            <div class="stat-icon">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number">{{ businesses|length }}</h3>
+                                <p class="stat-label">Total Businesses</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="stat-card bg-success">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number">{{ user_stats.total_users }}</h3>
+                                <p class="stat-label">Total Users</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="stat-card bg-info">
+                            <div class="stat-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number">4</h3>
+                                <p class="stat-label">Active Agents</p>
+                                <small class="stat-detail">Marketing, Analytics, Content, Admin</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="stat-card bg-warning">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number">✅</h3>
+                                <p class="stat-label">System Status</p>
+                                <small class="stat-detail">All systems operational</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Quick Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                <a href="{{ url_for('admin_businesses') }}" class="btn btn-primary me-2 mb-2">
+                                    🏢 Manage Businesses
+                                </a>
+                                <a href="{{ url_for('admin_users') }}" class="btn btn-success me-2 mb-2">
+                                    👥 Manage Users
+                                </a>
+                                <a href="{{ url_for('chat') }}" class="btn btn-info me-2 mb-2">
+                                    🤖 Test Agents
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Business Context Switcher</h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted">Switch to any business context to test their agents:</p>
+                                {% for business in businesses %}
+                                <a href="{{ url_for('switch_business', business_id=business.id) }}" 
+                                   class="btn btn-outline-primary btn-sm me-2 mb-2">
+                                    {{ business.name }}
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Businesses Overview -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Businesses Overview</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Business Name</th>
+                                        <th>Email</th>
+                                        <th>Users</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for business in businesses %}
+                                    <tr>
+                                        <td><strong>{{ business.name }}</strong></td>
+                                        <td>{{ business.email }}</td>
+                                        <td>
+                                            <span class="badge bg-primary">{{ business.user_count }} users</span>
+                                        </td>
+                                        <td>{{ business.created_at.strftime('%Y-%m-%d') if business.created_at else 'N/A' }}</td>
+                                        <td>
+                                            <a href="{{ url_for('switch_business', business_id=business.id) }}" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                Switch Context
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Users -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Recent Users</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Business</th>
+                                        <th>Created</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for recent_user in recent_users %}
+                                    <tr>
+                                        <td>{{ recent_user.name }}</td>
+                                        <td>{{ recent_user.email }}</td>
+                                        <td>{{ recent_user.business_name or 'N/A' }}</td>
+                                        <td>{{ recent_user.created_at.strftime('%Y-%m-%d') if recent_user.created_at else 'N/A' }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.sidebar {
+    height: calc(100vh - 80px);
+    position: sticky;
+    top: 80px;
+}
+
+.nav-link.active {
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 5px;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 10px;
+}
+
+/* Professional Stat Cards */
+.stat-card {
+    background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-primary) 100%);
+    border-radius: 15px;
+    padding: 25px;
+    color: white;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.stat-card.bg-primary {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+}
+
+.stat-card.bg-success {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+}
+
+.stat-card.bg-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+}
+
+.stat-card.bg-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+    color: #212529;
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    margin-right: 20px;
+    opacity: 0.8;
+    min-width: 60px;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 1rem;
+    margin: 5px 0 0 0;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+.stat-detail {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    margin-top: 3px;
+    display: block;
+}
+
+/* Card improvements */
+.card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid #dee2e6;
+    font-weight: 600;
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+/* Table improvements */
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+.badge {
+    border-radius: 6px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .stat-card {
+        height: 120px;
+        padding: 20px;
+        margin-bottom: 15px;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .stat-icon {
+        font-size: 2rem;
+        margin-right: 15px;
+    }
+}
+</style>
+{% endblock %}
