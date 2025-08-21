@@ -31,6 +31,7 @@ def pull_data_from_db(query: str, table: str) -> list[dict]:
     supabase = SupabaseClient()
     cur = supabase.cur
     
+
     embedding = embed_query(query)
 
     cur.execute(f"""

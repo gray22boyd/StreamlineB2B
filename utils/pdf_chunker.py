@@ -90,14 +90,14 @@ def upload_to_supabase(pdf_path: Path, table_name: str):
     embeddings = embed_chunks(chunks)
     
     # Connect to database
-    supabase = SupabaseClient(customer_schema="Legends")
+    supabase = SupabaseClient(customer_schema="legends")
     
     try:
         # Insert chunks and embeddings into single table
         for i, chunk in enumerate(chunks):
             embedding_data = embeddings.data[i]
-            supabase.cur.execute("""
-                INSERT INTO {supabase.customer_schema}.{table_name}  
+            supabase.cur.execute(f"""
+                INSERT INTO {supabase.customer_schema}.{table_name}
                 (index, embedding, source_file, chunk_number, text_content, created_at)
                 VALUES (%s, %s, %s, %s, %s, NOW())
             """, (
@@ -150,7 +150,7 @@ def main():
     print("Uploading to Supabase...")
     
 
-    upload_to_supabase(pdf_file)
+    upload_to_supabase(pdf_file, table_name="customer_service_embeddings")
     
 
     # Optionally upload to database

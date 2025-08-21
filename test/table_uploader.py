@@ -1,10 +1,12 @@
 from utils.pdf_chunker import upload_to_supabase
 from pathlib import Path
 from dotenv import load_dotenv
+from utils.supa import SupabaseClient
+from data import staff_data, customers_data, inventory_data, maintenance_data, events_data, bookings_data
 
 load_dotenv()
 
-def main():
+def uploade_pdf():
     print("Starting PDF chunker")
 
     # Change this to your file OR directory
@@ -22,7 +24,22 @@ def main():
 
     # Optionally upload to database
     # upload_to_supabase(pdf_file)
+def upload_to_table(table_name, data):
+    supabase = SupabaseClient(customer_schema="legends")
+    supabase.upload_to_table(table_name=table_name, data=data)
+    supabase.commit()
+    supabase.close()
+    print("Uploaded to table")
+
+    # Upload all table data
+def upload_all_table_data():
+    upload_to_table(table_name="prop_staff_data", data=staff_data)
+    upload_to_table(table_name="prop_customers_data", data=customers_data)
+    upload_to_table(table_name="prop_inventory_data", data=inventory_data)
+    upload_to_table(table_name="prop_maintenance_data", data=maintenance_data)
+    upload_to_table(table_name="prop_events_data", data=events_data)
+    upload_to_table(table_name="prop_bookings_data", data=bookings_data)
 
 if __name__ == "__main__":
-    main()
+    upload_all_table_data()
 

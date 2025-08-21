@@ -34,7 +34,8 @@ class SupabaseClient:
         self.conn.rollback()
 
     def create_table(self, table_name: str, columns: list[str]):
-        col_defs = sql.SQL(', ').join(sql.Identifier(col) for col in columns)
+        col_defs = sql.SQL(', ').join(sql.SQL(col) for col in columns)
+        print(col_defs)
         q = sql.SQL("CREATE TABLE IF NOT EXISTS {}.{} ({});").format(
             sql.Identifier(self.customer_schema),
             sql.Identifier(table_name),
@@ -57,12 +58,17 @@ class SupabaseClient:
         self.cur.execute(q, (self.customer_schema, table_name))
         return [row["column_name"] for row in self.cur.fetchall()]
 
-    def upload_to_table(self, table_name: str, data: list[dict]):
+    def upload_to_table(self, table_name: str, data: list[tuple]):
         columns = self.gather_columns(table_name)
         table = SupabaseTable(table_name, columns)
-        q = sql.SQL("INSERT INTO {}.{} VALUES (%s);").format(
+        
+        # Create placeholders for all columns
+        placeholders = ', '.join(['%s'] * len(columns))
+        q = sql.SQL("INSERT INTO {}.{} ({}) VALUES ({});").format(
             sql.Identifier(self.customer_schema),
-            sql.Identifier(table_name)
+            sql.Identifier(table_name),
+            sql.SQL(', ').join(sql.Identifier(col) for col in columns),
+            sql.SQL(placeholders)
         )
         self.cur.executemany(q, data)
         self.commit()
