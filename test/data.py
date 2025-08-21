@@ -20,7 +20,7 @@ customers_data = [
 ]
 
 inventory_data = [
-    (1, "Golf Club Set", "Professional golf club set with 14 clubs", 899.99, 25, "Equipment", 5),
+    (1, "Godlf Club Set", "Professional golf club set with 14 clubs", 899.99, 25, "Equipment", 5),
     (2, "Golf Balls (Dozen)", "Premium golf balls, 12 count", 24.99, 100, "Consumables", 20),
     (3, "Golf Cart", "Electric golf cart for course use", 2500.00, 15, "Equipment", 3),
     (4, "Golf Tees", "Wooden golf tees, 100 count", 5.99, 200, "Consumables", 50),
