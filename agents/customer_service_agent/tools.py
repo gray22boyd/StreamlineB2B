@@ -3,31 +3,25 @@ from utils.RAG import pull_data_from_db
 from utils.RAG import list_tables
 from utils.supa import SupabaseClient
 
-schema = "Legends"
-naming_convention = "customer_service"
-supabase = SupabaseClient(customer_schema=schema)
 
 class CustomerServiceTools:
-    def pull_tables_from_db():
+    def __init__(self, schema):
+        self.schema = schema
+        self.naming_convention = "customer_service"
+        self.supabase = SupabaseClient(customer_schema=schema)
+
+
+    def pull_tables_from_db(self):
         """
         Pull a list of tables from the supabase database that are for public facing use.
         """
-        supabase = SupabaseClient(customer_schema=schema)
-        supabase.cur.execute(f"SELECT table_name FROM information_schema.tables WHERE table_schema = '{schema}' AND table_name LIKE '{naming_convention}%';")
-        return supabase.cur.fetchall()
+        self.supabase.cur.execute(f"SELECT table_name FROM information_schema.tables WHERE table_schema = '{self.schema}' AND table_name LIKE '{self.naming_convention}%';")
+        return self.supabase.cur.fetchall()
 
-    def pull_relevant_chunks(query: str, table_name: str):
+    def pull_relevant_chunks(self, query: str, table_name: str):
         """
         Pull a list of tables from the supabase database that are for public facing use.
         """
-        relevant_chunks = pull_data_from_db(query, table_name)
-        text = relevant_chunks[0]['text_content']
-        return text
+        self.supabase.cur.execute(f"SELECT text_content FROM {table_name} WHERE text_content LIKE '%{query}%';")
+        return self.supabase.cur.fetchall()
 
-
-def main():
-    print(CustomerServiceTools.pull_tables_from_db())
-    print(CustomerServiceTools.pull_relevant_chunks("What is the total distance of the course?", "customer_service_embeddings"))
-
-if __name__ == "__main__":
-    main()

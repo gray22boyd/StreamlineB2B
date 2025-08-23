@@ -32,7 +32,7 @@ A comprehensive B2B automation platform that combines AI-powered customer servic
 
 3. **Install dependencies**
    ```bash
-   pip install -e .
+   uv pip install -e .
    ```
 
 4. **Set up environment variables**
