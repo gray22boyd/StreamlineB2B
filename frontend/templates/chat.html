@@ -24,18 +24,13 @@
                 </div>
 
                 <div class="flex-grow-1 p-3">
-                    <div class="agent-list">
-                        <div class="agent-item active" data-agent="marketing">
-                            <i class="fas fa-bullhorn me-2"></i>
-                            Marketing Agent
-                        </div>
-                        <div class="agent-item" data-agent="analytics">
-                            <i class="fas fa-chart-bar me-2"></i>
-                            Analytics Agent
-                        </div>
-                        <div class="agent-item" data-agent="content">
-                            <i class="fas fa-edit me-2"></i>
-                            Content Agent
+                    <div class="agent-list" id="agent-list">
+                        <!-- Agents will be loaded dynamically -->
+                        <div class="text-center text-muted">
+                            <div class="spinner-border spinner-border-sm" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div>Loading your agents...</div>
                         </div>
                     </div>
                 </div>
@@ -58,18 +53,17 @@
             <!-- Chat header -->
             <div class="chat-header p-3 border-bottom bg-white">
                 <h5 class="mb-0" id="current-agent">
-                    <i class="fas fa-bullhorn me-2"></i>Marketing Agent
+                    <i class="fas fa-robot me-2"></i>Select an Agent
                 </h5>
-                <small class="text-muted">Ready to help with your Facebook marketing</small>
+                <small class="text-muted" id="agent-description">Choose an agent from the sidebar to get started</small>
             </div>
 
             <!-- Chat messages -->
             <div class="chat-messages flex-grow-1 p-3" id="chat-messages">
-                <div class="message assistant-message">
-                    <div class="message-content">
-                        <strong>Marketing Agent:</strong> Hello! I'm your marketing agent. I can help you manage your Facebook pages, create posts, and analyze your social media performance. What would you like to do today?
-                    </div>
-                    <div class="message-time">Just now</div>
+                <div class="text-center text-muted mt-5">
+                    <i class="fas fa-robot fa-3x mb-3"></i>
+                    <h5>Welcome to Your AI Agents</h5>
+                    <p>Select an agent from the sidebar to start a conversation.</p>
                 </div>
             </div>
 
@@ -77,8 +71,8 @@
             <div class="chat-input p-3 border-top bg-white">
                 <form id="chat-form" class="d-flex">
                     <input type="text" class="form-control me-2" id="message-input"
-                           placeholder="Type your message..." autocomplete="off">
-                    <button type="submit" class="btn btn-primary">
+                           placeholder="Select an agent to start chatting..." autocomplete="off" disabled>
+                    <button type="submit" class="btn btn-primary" id="send-btn" disabled>
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </form>
@@ -104,15 +98,34 @@
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
+    border: 1px solid transparent;
 }
 
 .agent-item:hover {
     background-color: #e9ecef;
+    border-color: #dee2e6;
 }
 
 .agent-item.active {
     background-color: #0d6efd;
     color: white;
+    border-color: #0d6efd;
+}
+
+.agent-item.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.agent-item .agent-name {
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.agent-item .agent-desc {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    margin-top: 2px;
 }
 
 .chat-messages {
@@ -122,7 +135,7 @@
 
 .message {
     margin-bottom: 20px;
-    max-width: 70%;
+    max-width: 75%;
 }
 
 .assistant-message {
@@ -138,6 +151,7 @@
     border-radius: 18px;
     background-color: white;
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    word-wrap: break-word;
 }
 
 .user-message .message-content {
@@ -175,66 +189,286 @@
     align-items: center;
     justify-content: center;
 }
+
+.typing-indicator {
+    display: none;
+    padding: 12px 16px;
+    background-color: #e9ecef;
+    border-radius: 18px;
+    margin-bottom: 10px;
+    max-width: 75%;
+}
+
+.typing-dots {
+    display: flex;
+    gap: 4px;
+}
+
+.typing-dots span {
+    width: 8px;
+    height: 8px;
+    background-color: #6c757d;
+    border-radius: 50%;
+    animation: typing 1.4s ease-in-out infinite;
+}
+
+.typing-dots span:nth-child(1) { animation-delay: 0s; }
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-10px); }
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 10px 0;
+}
 </style>
 
 <script>
-// Chat functionality
-document.getElementById('chat-form').addEventListener('submit', function(e) {
-    e.preventDefault();
+// Global variables
+let currentAgent = null;
+let currentConversationId = null;
+let availableAgents = [];
 
-    const messageInput = document.getElementById('message-input');
-    const message = messageInput.value.trim();
-
-    if (message) {
-        addMessage(message, 'user');
-        messageInput.value = '';
-
-        // Simulate agent response
-        setTimeout(() => {
-            addMessage("I received your message: '" + message + "'. How can I help you with that?", 'assistant');
-        }, 1000);
-    }
+// Initialize chat when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadAvailableAgents();
+    setupChatForm();
 });
 
+// Load available agents from API
+async function loadAvailableAgents() {
+    try {
+        const response = await fetch('/api/agents/available');
+        const data = await response.json();
+        
+        if (data.success) {
+            availableAgents = data.agents;
+            renderAgentList(data.agents);
+            
+            // Auto-select first agent if available
+            if (data.agents.length > 0) {
+                selectAgent(data.agents[0]);
+            }
+        } else {
+            showError('Failed to load agents: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Error loading agents:', error);
+        showError('Failed to load agents. Please refresh the page.');
+    }
+}
+
+// Render agent list in sidebar
+function renderAgentList(agents) {
+    const agentList = document.getElementById('agent-list');
+    
+    if (agents.length === 0) {
+        agentList.innerHTML = `
+            <div class="text-center text-muted">
+                <i class="fas fa-exclamation-triangle mb-2"></i>
+                <div>No agents available</div>
+                <small>Contact your administrator</small>
+            </div>
+        `;
+        return;
+    }
+    
+    agentList.innerHTML = agents.map(agent => `
+        <div class="agent-item" data-agent="${agent.type}">
+            <i class="${agent.icon} me-2"></i>
+            <div class="agent-name">${agent.name}</div>
+            <div class="agent-desc">${agent.description}</div>
+        </div>
+    `).join('');
+    
+    // Add click handlers
+    document.querySelectorAll('.agent-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const agentType = this.dataset.agent;
+            const agent = agents.find(a => a.type === agentType);
+            if (agent) {
+                selectAgent(agent);
+            }
+        });
+    });
+}
+
+// Select and activate an agent
+function selectAgent(agent) {
+    currentAgent = agent;
+    currentConversationId = null; // Start new conversation
+    
+    // Update UI
+    document.querySelectorAll('.agent-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.agent === agent.type);
+    });
+    
+    // Update header
+    document.getElementById('current-agent').innerHTML = `
+        <i class="${agent.icon} me-2"></i>${agent.name}
+    `;
+    document.getElementById('agent-description').textContent = agent.description;
+    
+    // Enable chat input
+    const messageInput = document.getElementById('message-input');
+    const sendBtn = document.getElementById('send-btn');
+    messageInput.disabled = false;
+    sendBtn.disabled = false;
+    messageInput.placeholder = `Chat with ${agent.name}...`;
+    
+    // Clear chat and show welcome message
+    clearChat();
+    addWelcomeMessage(agent);
+}
+
+// Setup chat form submission
+function setupChatForm() {
+    document.getElementById('chat-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if (!currentAgent) {
+            showError('Please select an agent first');
+            return;
+        }
+        
+        const messageInput = document.getElementById('message-input');
+        const message = messageInput.value.trim();
+        
+        if (message) {
+            // Add user message to chat
+            addMessage(message, 'user');
+            messageInput.value = '';
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Send to API
+            try {
+                const response = await fetch('/api/chat/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        agent_type: currentAgent.type,
+                        message: message,
+                        conversation_id: currentConversationId
+                    })
+                });
+                
+                const data = await response.json();
+                hideTypingIndicator();
+                
+                if (data.success) {
+                    // Update conversation ID
+                    currentConversationId = data.conversation_id;
+                    
+                    // Add agent response
+                    addMessage(data.response, 'assistant');
+                } else {
+                    showError('Agent error: ' + data.error);
+                }
+            } catch (error) {
+                hideTypingIndicator();
+                console.error('Chat error:', error);
+                showError('Failed to send message. Please try again.');
+            }
+        }
+    });
+}
+
+// Add message to chat
 function addMessage(content, sender) {
     const messagesContainer = document.getElementById('chat-messages');
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${sender}-message`;
-
+    
     const now = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-
+    const agentName = currentAgent ? currentAgent.name : 'Assistant';
+    
     messageDiv.innerHTML = `
         <div class="message-content">
-            ${sender === 'assistant' ? '<strong>Marketing Agent:</strong> ' : ''}${content}
+            ${sender === 'assistant' ? `<strong>${agentName}:</strong> ` : ''}${content}
         </div>
         <div class="message-time">${now}</div>
     `;
-
+    
     messagesContainer.appendChild(messageDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
-// Agent switching
-document.querySelectorAll('.agent-item').forEach(item => {
-    item.addEventListener('click', function() {
-        // Update active state
-        document.querySelectorAll('.agent-item').forEach(i => i.classList.remove('active'));
-        this.classList.add('active');
-
-        // Update header
-        const agentName = this.textContent.trim();
-        document.getElementById('current-agent').innerHTML = this.innerHTML;
-
-        // Clear chat and add welcome message
-        document.getElementById('chat-messages').innerHTML = `
-            <div class="message assistant-message">
-                <div class="message-content">
-                    <strong>${agentName}:</strong> Hello! I'm ready to assist you. What can I help you with?
-                </div>
-                <div class="message-time">Just now</div>
+// Add welcome message for agent
+function addWelcomeMessage(agent) {
+    const messagesContainer = document.getElementById('chat-messages');
+    const now = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    
+    messagesContainer.innerHTML = `
+        <div class="message assistant-message">
+            <div class="message-content">
+                <strong>${agent.name}:</strong> Hello! I'm your ${agent.name.toLowerCase()}. ${agent.description}. How can I help you today?
             </div>
-        `;
-    });
-});
+            <div class="message-time">${now}</div>
+        </div>
+    `;
+}
+
+// Clear chat messages
+function clearChat() {
+    document.getElementById('chat-messages').innerHTML = '';
+}
+
+// Show typing indicator
+function showTypingIndicator() {
+    const messagesContainer = document.getElementById('chat-messages');
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'typing-indicator';
+    typingDiv.id = 'typing-indicator';
+    
+    typingDiv.innerHTML = `
+        <div class="typing-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    `;
+    
+    messagesContainer.appendChild(typingDiv);
+    typingDiv.style.display = 'block';
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Hide typing indicator
+function hideTypingIndicator() {
+    const indicator = document.getElementById('typing-indicator');
+    if (indicator) {
+        indicator.remove();
+    }
+}
+
+// Show error message
+function showError(message) {
+    const messagesContainer = document.getElementById('chat-messages');
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
+    
+    messagesContainer.appendChild(errorDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    // Auto-remove error after 5 seconds
+    setTimeout(() => {
+        if (errorDiv.parentNode) {
+            errorDiv.remove();
+        }
+    }, 5000);
+}
 </script>
 {% endblock %}

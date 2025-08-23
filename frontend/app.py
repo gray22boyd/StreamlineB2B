@@ -268,6 +268,194 @@ def chat():
     return render_template('chat.html', user=session['user'])
 
 
+# ==========================================
+# AI Agent API Endpoints
+# ==========================================
+
+@app.route('/api/agents/available', methods=['GET'])
+def get_available_agents():
+    """Get list of agents available to current user"""
+    if 'user' not in session:
+        return jsonify({'error': 'Not authenticated'}), 401
+    
+    try:
+        from business_agent_manager import create_business_agent_manager
+        
+        user = session['user']
+        business_id = user['business_id']
+        user_id = user['id']
+        
+        # Handle admin context switching
+        if user.get('is_super_admin') and session.get('admin_business_context'):
+            business_id = session['admin_business_context']['business_id']
+            user_id = None  # Admin gets all agents
+        
+        manager = create_business_agent_manager(business_id, user_id)
+        available_agents = manager.get_available_agents()
+        
+        # Map agent types to display names and descriptions
+        agent_info = {
+            'marketing': {
+                'name': 'Marketing Assistant',
+                'description': 'Facebook posting, page management, and marketing analytics',
+                'icon': 'fas fa-bullhorn'
+            },
+            'customer_service': {
+                'name': 'Customer Service Assistant', 
+                'description': 'Customer support with access to your knowledge base',
+                'icon': 'fas fa-headset'
+            },
+            'analytics': {
+                'name': 'Analytics Assistant',
+                'description': 'Business insights and data analysis',
+                'icon': 'fas fa-chart-line'
+            }
+        }
+        
+        agents = []
+        for agent_type in available_agents:
+            if agent_type in agent_info:
+                agents.append({
+                    'type': agent_type,
+                    **agent_info[agent_type]
+                })
+        
+        return jsonify({
+            'success': True,
+            'agents': agents,
+            'business_name': manager.business_data['info']['name'],
+            'is_admin_context': session.get('admin_business_context') is not None
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/api/chat/send', methods=['POST'])
+def send_chat_message():
+    """Send message to AI agent"""
+    if 'user' not in session:
+        return jsonify({'error': 'Not authenticated'}), 401
+    
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+        
+        agent_type = data.get('agent_type')
+        message = data.get('message')
+        conversation_id = data.get('conversation_id')
+        
+        if not agent_type or not message:
+            return jsonify({'error': 'agent_type and message are required'}), 400
+        
+        from business_agent_manager import create_business_agent_manager
+        
+        user = session['user']
+        business_id = user['business_id']
+        user_id = user['id']
+        
+        # Handle admin context switching
+        if user.get('is_super_admin') and session.get('admin_business_context'):
+            business_id = session['admin_business_context']['business_id']
+            user_id = user['id']  # Keep user_id for conversation tracking
+        
+        manager = create_business_agent_manager(business_id, user_id)
+        
+        # Process message with agent
+        result = manager.process_message(agent_type, message, conversation_id)
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/api/chat/tool', methods=['POST'])
+def execute_agent_tool():
+    """Execute agent tool directly"""
+    if 'user' not in session:
+        return jsonify({'error': 'Not authenticated'}), 401
+    
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+        
+        agent_type = data.get('agent_type')
+        tool_name = data.get('tool_name')
+        parameters = data.get('parameters', {})
+        conversation_id = data.get('conversation_id')
+        
+        if not agent_type or not tool_name:
+            return jsonify({'error': 'agent_type and tool_name are required'}), 400
+        
+        from business_agent_manager import create_business_agent_manager
+        
+        user = session['user']
+        business_id = user['business_id']
+        user_id = user['id']
+        
+        # Handle admin context switching
+        if user.get('is_super_admin') and session.get('admin_business_context'):
+            business_id = session['admin_business_context']['business_id']
+            user_id = user['id']
+        
+        manager = create_business_agent_manager(business_id, user_id)
+        
+        # Execute tool
+        result = manager.execute_tool(agent_type, tool_name, parameters, conversation_id)
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/api/chat/conversations', methods=['GET'])
+def get_conversations():
+    """Get conversation history for current user"""
+    if 'user' not in session:
+        return jsonify({'error': 'Not authenticated'}), 401
+    
+    try:
+        agent_type = request.args.get('agent_type')
+        
+        from business_agent_manager import create_business_agent_manager
+        
+        user = session['user']
+        business_id = user['business_id']
+        user_id = user['id']
+        
+        # Handle admin context switching
+        if user.get('is_super_admin') and session.get('admin_business_context'):
+            business_id = session['admin_business_context']['business_id']
+            user_id = None  # Admin sees all conversations for business
+        
+        manager = create_business_agent_manager(business_id, user_id)
+        conversations = manager.get_conversation_list(agent_type)
+        
+        return jsonify({
+            'success': True,
+            'conversations': conversations
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
 @app.route('/logout')
 def logout():
     """Logout user"""
