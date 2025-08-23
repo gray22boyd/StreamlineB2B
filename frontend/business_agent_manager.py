@@ -142,6 +142,13 @@ class BusinessAgentManager:
     def _create_marketing_agent(self):
         """Create marketing agent with business-specific Facebook credentials"""
         try:
+            # Add project root to path to find agents module
+            import sys
+            import os
+            project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            if project_root not in sys.path:
+                sys.path.insert(0, project_root)
+            
             from agents.marketing_agent.tools import FacebookMarketingTools
             return FacebookMarketingTools(self.business_id)
         except Exception as e:
@@ -150,6 +157,13 @@ class BusinessAgentManager:
     def _create_customer_service_agent(self):
         """Create customer service agent with business-specific knowledge base"""
         try:
+            # Add project root to path to find agents module
+            import sys
+            import os
+            project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            if project_root not in sys.path:
+                sys.path.insert(0, project_root)
+            
             from agents.customer_service_agent.tools import CustomerServiceTools
             return CustomerServiceTools(
                 business_id=self.business_id,
