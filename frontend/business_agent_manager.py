@@ -38,8 +38,14 @@ class BusinessAgentManager:
         self.db_connection = self._get_db_connection()
         self.business_data = self._load_business_data()
         
-        # Initialize OpenAI client
-        self.openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+        # Initialize OpenAI client with fallback handling
+        openai_key = os.getenv('OPENAI_API_KEY')
+        if not openai_key:
+            print("Warning: OPENAI_API_KEY not found in environment variables")
+            # Create a dummy client for now to prevent crashes
+            self.openai_client = None
+        else:
+            self.openai_client = OpenAI(api_key=openai_key)
         
     def _get_db_connection(self):
         """Get database connection with RealDictCursor for easier data access"""
@@ -273,6 +279,10 @@ class BusinessAgentManager:
         """
         Process message with AI and agent tools using OpenAI GPT.
         """
+        # If OpenAI client is not available, use fallback
+        if not self.openai_client:
+            return self._get_fallback_response(agent_type, user_message)
+            
         try:
             # Build system prompt based on agent type and business context
             system_prompt = self._build_system_prompt(agent_type)
