@@ -272,6 +272,11 @@ def chat():
 # AI Agent API Endpoints
 # ==========================================
 
+@app.route('/api/test', methods=['GET'])
+def test_endpoint():
+    """Simple test endpoint to check if basic API works"""
+    return jsonify({'status': 'OK', 'message': 'API is working'})
+
 @app.route('/api/agents/available', methods=['GET'])
 def get_available_agents():
     """Get list of agents available to current user"""
@@ -279,7 +284,14 @@ def get_available_agents():
         return jsonify({'error': 'Not authenticated'}), 401
     
     try:
-        from business_agent_manager import create_business_agent_manager
+        # Test basic imports first
+        try:
+            from business_agent_manager import create_business_agent_manager
+        except ImportError as ie:
+            return jsonify({
+                'success': False,
+                'error': f'Import error: {str(ie)}'
+            }), 500
         
         user = session['user']
         business_id = user['business_id']
@@ -290,8 +302,23 @@ def get_available_agents():
             business_id = session['admin_business_context']['business_id']
             user_id = None  # Admin gets all agents
         
-        manager = create_business_agent_manager(business_id, user_id)
-        available_agents = manager.get_available_agents()
+        # Test manager creation
+        try:
+            manager = create_business_agent_manager(business_id, user_id)
+        except Exception as me:
+            return jsonify({
+                'success': False,
+                'error': f'Manager creation error: {str(me)}'
+            }), 500
+        
+        # Test getting agents
+        try:
+            available_agents = manager.get_available_agents()
+        except Exception as ae:
+            return jsonify({
+                'success': False,
+                'error': f'Get agents error: {str(ae)}'
+            }), 500
         
         # Map agent types to display names and descriptions
         agent_info = {
@@ -330,7 +357,7 @@ def get_available_agents():
     except Exception as e:
         return jsonify({
             'success': False,
-            'error': str(e)
+            'error': f'General error: {str(e)}'
         }), 500
 
 
