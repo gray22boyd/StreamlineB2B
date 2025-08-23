@@ -16,6 +16,8 @@ from typing import Dict, List, Optional, Any
 import psycopg2
 import psycopg2.extras
 from dotenv import load_dotenv
+import openai
+from openai import OpenAI
 
 load_dotenv()
 
@@ -35,6 +37,9 @@ class BusinessAgentManager:
         self.user_id = user_id
         self.db_connection = self._get_db_connection()
         self.business_data = self._load_business_data()
+        
+        # Initialize OpenAI client
+        self.openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
         
     def _get_db_connection(self):
         """Get database connection with RealDictCursor for easier data access"""
@@ -266,12 +271,212 @@ class BusinessAgentManager:
     
     def _process_with_ai(self, agent, agent_type: str, user_message: str, conversation_history: List[Dict]) -> str:
         """
-        Process message with AI and agent tools.
-        
-        This is where we'll integrate OpenAI GPT with tool calling.
-        For now, return a placeholder response.
+        Process message with AI and agent tools using OpenAI GPT.
         """
-        # TODO: Implement OpenAI integration
+        try:
+            # Build system prompt based on agent type and business context
+            system_prompt = self._build_system_prompt(agent_type)
+            
+            # Convert conversation history to OpenAI format
+            messages = self._format_conversation_for_openai(conversation_history, system_prompt, user_message)
+            
+            # Get available tools for this agent
+            tools = self._get_agent_tools_for_openai(agent_type)
+            
+            # Call OpenAI API
+            if tools:
+                response = self.openai_client.chat.completions.create(
+                    model="gpt-4",
+                    messages=messages,
+                    tools=tools,
+                    tool_choice="auto",
+                    temperature=0.7,
+                    max_tokens=1000
+                )
+            else:
+                response = self.openai_client.chat.completions.create(
+                    model="gpt-4",
+                    messages=messages,
+                    temperature=0.7,
+                    max_tokens=1000
+                )
+            
+            # Process response and handle tool calls
+            return self._process_openai_response(response, agent, agent_type)
+            
+        except Exception as e:
+            # Fallback to simple response if OpenAI fails
+            print(f"OpenAI error: {e}")
+            return self._get_fallback_response(agent_type, user_message)
+    
+    def _build_system_prompt(self, agent_type: str) -> str:
+        """Build system prompt based on agent type and business context"""
+        business_name = self.business_data['info']['name']
+        business_settings = self.business_data['settings']
+        
+        base_prompt = f"""You are an AI assistant for {business_name}, a business automation platform. 
+You are professional, helpful, and knowledgeable about business operations.
+
+Business Context:
+- Business Name: {business_name}
+- You can access and use tools specific to this business
+- Always maintain context about which business you're serving
+
+"""
+        
+        if agent_type == 'marketing':
+            return base_prompt + f"""Your Role: Marketing Assistant
+You specialize in:
+- Facebook page management and posting
+- Social media content creation
+- Marketing analytics and insights
+- Campaign management
+
+You have access to {business_name}'s Facebook credentials and can:
+- Create and publish posts to their Facebook page
+- Check page analytics and insights
+- List page information and follower counts
+
+Always ask for confirmation before posting content publicly."""
+
+        elif agent_type == 'customer_service':
+            return base_prompt + f"""Your Role: Customer Service Assistant
+You specialize in:
+- Answering customer questions using {business_name}'s knowledge base
+- Providing helpful and accurate information
+- Escalating complex issues when appropriate
+
+You have access to {business_name}'s documents and knowledge base.
+Always be helpful, professional, and accurate in your responses."""
+
+        elif agent_type == 'analytics':
+            return base_prompt + f"""Your Role: Analytics Assistant
+You specialize in:
+- Business data analysis and insights
+- Performance metrics and KPIs
+- Reporting and visualization recommendations
+- Data-driven decision support
+
+Help {business_name} understand their business performance and make data-driven decisions."""
+
+        else:
+            return base_prompt + f"You are a general business assistant for {business_name}."
+    
+    def _format_conversation_for_openai(self, conversation_history: List[Dict], system_prompt: str, user_message: str) -> List[Dict]:
+        """Convert conversation history to OpenAI message format"""
+        messages = [{"role": "system", "content": system_prompt}]
+        
+        # Add conversation history (limit to last 10 messages for context)
+        for msg in conversation_history[-10:]:
+            messages.append({
+                "role": msg['role'],
+                "content": msg['content']
+            })
+        
+        # Add current user message
+        messages.append({"role": "user", "content": user_message})
+        
+        return messages
+    
+    def _get_agent_tools_for_openai(self, agent_type: str) -> List[Dict]:
+        """Get available tools for agent in OpenAI format"""
+        if agent_type == 'marketing':
+            return [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "list_facebook_pages",
+                        "description": "List Facebook pages for this business with follower counts and basic info",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {},
+                            "required": []
+                        }
+                    }
+                },
+                {
+                    "type": "function", 
+                    "function": {
+                        "name": "post_to_facebook",
+                        "description": "Post a text message to the business's Facebook page",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "The text content to post"
+                                }
+                            },
+                            "required": ["message"]
+                        }
+                    }
+                },
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "post_image_to_facebook", 
+                        "description": "Post an image with caption to the business's Facebook page",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "caption": {
+                                    "type": "string",
+                                    "description": "Caption text for the image"
+                                },
+                                "image_url": {
+                                    "type": "string",
+                                    "description": "URL of the image to post"
+                                }
+                            },
+                            "required": ["caption", "image_url"]
+                        }
+                    }
+                }
+            ]
+        
+        # No tools for other agents yet
+        return []
+    
+    def _process_openai_response(self, response, agent, agent_type: str) -> str:
+        """Process OpenAI response and handle tool calls"""
+        choice = response.choices[0]
+        message = choice.message
+        
+        # Check if OpenAI wants to call tools
+        if message.tool_calls:
+            # Execute tool calls
+            tool_responses = []
+            for tool_call in message.tool_calls:
+                try:
+                    result = self._execute_openai_tool_call(agent, tool_call)
+                    tool_responses.append(f"Tool '{tool_call.function.name}' result: {result}")
+                except Exception as e:
+                    tool_responses.append(f"Tool '{tool_call.function.name}' failed: {str(e)}")
+            
+            # Return response with tool results
+            if tool_responses:
+                base_response = message.content or "I've executed the following actions:"
+                return f"{base_response}\n\n" + "\n".join(tool_responses)
+        
+        # Return regular text response
+        return message.content or self._get_fallback_response(agent_type, "")
+    
+    def _execute_openai_tool_call(self, agent, tool_call):
+        """Execute a tool call from OpenAI"""
+        function_name = tool_call.function.name
+        arguments = json.loads(tool_call.function.arguments)
+        
+        if function_name == "list_facebook_pages":
+            return agent.list_pages()
+        elif function_name == "post_to_facebook":
+            return agent.post_text(arguments['message'])
+        elif function_name == "post_image_to_facebook":
+            return agent.post_image(arguments['caption'], arguments['image_url'])
+        else:
+            raise ValueError(f"Unknown tool: {function_name}")
+    
+    def _get_fallback_response(self, agent_type: str, user_message: str) -> str:
+        """Fallback response when OpenAI fails"""
         business_name = self.business_data['info']['name']
         
         if agent_type == 'marketing':
