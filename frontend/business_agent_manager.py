@@ -488,21 +488,33 @@ Help {business_name} understand their business performance and make data-driven 
             
             # Let the AI format the tool results naturally
             if tool_results:
-                # Create a follow-up message with tool results for the AI to interpret
-                messages = [
-                    {"role": "system", "content": self._build_system_prompt(agent_type)},
-                    {"role": "user", "content": "Please provide a friendly, human response based on these tool results."},
-                    {"role": "assistant", "content": f"Tool results: {tool_results}"}
-                ]
-                
-                follow_up = self.openai_client.chat.completions.create(
-                    model="gpt-4",
-                    messages=messages,
-                    temperature=0.7,
-                    max_tokens=500
-                )
-                
-                return follow_up.choices[0].message.content
+                try:
+                    # Create a follow-up message with tool results for the AI to interpret
+                    messages = [
+                        {"role": "system", "content": self._build_system_prompt(agent_type)},
+                        {"role": "user", "content": "Please provide a friendly, human response based on these tool results."},
+                        {"role": "assistant", "content": f"Tool results: {tool_results}"}
+                    ]
+                    
+                    print(f"🔧 FOLLOW-UP DEBUG: About to make follow-up OpenAI call")
+                    follow_up = self.openai_client.chat.completions.create(
+                        model="gpt-4",
+                        messages=messages,
+                        temperature=0.7,
+                        max_tokens=500
+                    )
+                    
+                    return follow_up.choices[0].message.content
+                except Exception as e:
+                    print(f"🔧 FOLLOW-UP ERROR: {e}")
+                    # Fallback to simple response if follow-up fails
+                    if tool_results and len(tool_results) > 0:
+                        first_result = tool_results[0]
+                        if 'error' in first_result:
+                            return f"Error executing {first_result['name']}: {first_result['error']}"
+                        else:
+                            return f"Successfully executed {first_result['name']}: {first_result['result']}"
+                    return "Tool execution completed."
         
         # Return regular text response
         return message.content or self._get_fallback_response(agent_type, "")
