@@ -629,3 +629,4 @@ def create_business_agent_manager(business_id: str, user_id: str = None) -> Busi
         Configured BusinessAgentManager instance
     """
     return BusinessAgentManager(business_id, user_id)
+# JSON fix applied Sun Aug 24 10:12:24 CDT 2025
