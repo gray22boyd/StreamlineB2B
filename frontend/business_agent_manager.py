@@ -492,8 +492,9 @@ Help {business_name} understand their business performance and make data-driven 
         """Execute a tool call from OpenAI"""
         function_name = tool_call.function.name
         # Handle arguments - might be string or already parsed
-        # DEBUG: Print for Railway deployment verification
+        # DEBUG: Print for Railway deployment verification - Force redeploy v2
         print(f"🔧 TOOL CALL DEBUG: function={function_name}, args_type={type(tool_call.function.arguments)}")
+        print(f"🔧 ENV DEBUG: OPENAI_KEY present = {bool(os.getenv('OPENAI_API_KEY'))}")
         try:
             if isinstance(tool_call.function.arguments, str):
                 arguments = json.loads(tool_call.function.arguments)
