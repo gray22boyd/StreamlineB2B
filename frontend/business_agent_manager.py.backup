@@ -488,14 +488,7 @@ Help {business_name} understand their business performance and make data-driven 
     def _execute_openai_tool_call(self, agent, tool_call):
         """Execute a tool call from OpenAI"""
         function_name = tool_call.function.name
-        # Handle arguments - might be string or already parsed
-        try:
-            if isinstance(tool_call.function.arguments, str):
-                arguments = json.loads(tool_call.function.arguments)
-            else:
-                arguments = tool_call.function.arguments or {}
-        except (json.JSONDecodeError, TypeError):
-            arguments = {}
+        arguments = json.loads(tool_call.function.arguments)
         
         if function_name == "list_facebook_pages":
             return agent.list_pages()
