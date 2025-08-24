@@ -471,19 +471,38 @@ Help {business_name} understand their business performance and make data-driven 
         
         # Check if OpenAI wants to call tools
         if message.tool_calls:
-            # Execute tool calls
-            tool_responses = []
+            # Execute tool calls and format responses properly
+            tool_results = []
             for tool_call in message.tool_calls:
                 try:
                     result = self._execute_openai_tool_call(agent, tool_call)
-                    tool_responses.append(f"Tool '{tool_call.function.name}' result: {result}")
+                    tool_results.append({
+                        'name': tool_call.function.name,
+                        'result': result
+                    })
                 except Exception as e:
-                    tool_responses.append(f"Tool '{tool_call.function.name}' failed: {str(e)}")
+                    tool_results.append({
+                        'name': tool_call.function.name,
+                        'error': str(e)
+                    })
             
-            # Return response with tool results
-            if tool_responses:
-                base_response = message.content or "I've executed the following actions:"
-                return f"{base_response}\n\n" + "\n".join(tool_responses)
+            # Let the AI format the tool results naturally
+            if tool_results:
+                # Create a follow-up message with tool results for the AI to interpret
+                messages = [
+                    {"role": "system", "content": self._build_system_prompt(agent_type)},
+                    {"role": "user", "content": "Please provide a friendly, human response based on these tool results."},
+                    {"role": "assistant", "content": f"Tool results: {tool_results}"}
+                ]
+                
+                follow_up = self.openai_client.chat.completions.create(
+                    model="gpt-4",
+                    messages=messages,
+                    temperature=0.7,
+                    max_tokens=500
+                )
+                
+                return follow_up.choices[0].message.content
         
         # Return regular text response
         return message.content or self._get_fallback_response(agent_type, "")
