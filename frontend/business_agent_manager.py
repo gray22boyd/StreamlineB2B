@@ -226,6 +226,9 @@ class BusinessAgentManager:
         conversation_id = str(uuid.uuid4())
         
         cur = self.db_connection.cursor()
+        # Handle null user_id for admin context
+        user_id_val = self.user_id if self.user_id else '00000000-0000-0000-0000-000000000000'
+        
         cur.execute("""
             INSERT INTO agent_conversations 
             (id, business_id, user_id, agent_type, message_history, session_data)
@@ -233,7 +236,7 @@ class BusinessAgentManager:
         """, (
             conversation_id,
             self.business_id,
-            self.user_id,
+            user_id_val,
             agent_type,
             json.dumps([]),
             json.dumps({})
