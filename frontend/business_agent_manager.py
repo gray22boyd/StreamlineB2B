@@ -311,15 +311,21 @@ class BusinessAgentManager:
             tools = self._get_agent_tools_for_openai(agent_type)
             
             # Call OpenAI API
+            print(f"🔧 OPENAI DEBUG: About to call OpenAI with {len(tools) if tools else 0} tools")
             if tools:
-                response = self.openai_client.chat.completions.create(
-                    model="gpt-4",
-                    messages=messages,
-                    tools=tools,
-                    tool_choice="auto",
-                    temperature=0.7,
-                    max_tokens=1000
-                )
+                try:
+                    response = self.openai_client.chat.completions.create(
+                        model="gpt-4",
+                        messages=messages,
+                        tools=tools,
+                        tool_choice="auto",
+                        temperature=0.7,
+                        max_tokens=1000
+                    )
+                    print(f"🔧 OPENAI SUCCESS: Got response with {len(response.choices[0].message.tool_calls or [])} tool calls")
+                except Exception as e:
+                    print(f"🔧 OPENAI ERROR: {e}")
+                    raise
             else:
                 response = self.openai_client.chat.completions.create(
                     model="gpt-4",
@@ -526,12 +532,16 @@ Help {business_name} understand their business performance and make data-driven 
         # DEBUG: Print for Railway deployment verification - Force redeploy v2
         print(f"🔧 TOOL CALL DEBUG: function={function_name}, args_type={type(tool_call.function.arguments)}")
         print(f"🔧 ENV DEBUG: OPENAI_KEY present = {bool(os.getenv('OPENAI_API_KEY'))}")
+        print(f"🔧 ARGS DEBUG: Raw arguments = {tool_call.function.arguments}")
         try:
             if isinstance(tool_call.function.arguments, str):
                 arguments = json.loads(tool_call.function.arguments)
+                print(f"🔧 ARGS PARSED: {arguments}")
             else:
                 arguments = tool_call.function.arguments or {}
-        except (json.JSONDecodeError, TypeError):
+                print(f"🔧 ARGS DIRECT: {arguments}")
+        except (json.JSONDecodeError, TypeError) as e:
+            print(f"🔧 ARGS ERROR: {e}")
             arguments = {}
         
         if function_name == "list_facebook_pages":
