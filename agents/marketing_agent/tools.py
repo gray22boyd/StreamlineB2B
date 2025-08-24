@@ -106,32 +106,26 @@ class FacebookMarketingTools:
     def list_pages(self):
         """MCP Tool: List Facebook pages for this business"""
         try:
-            # Use me/accounts to list all pages the user manages
+            # Get page info using the page access token we have
             response = self._make_api_call(
-                endpoint='me/accounts',
+                endpoint=self.page_id,
                 params={'fields': 'id,name,category,followers_count,fan_count'}
             )
 
             response.raise_for_status()
-            data = response.json()
+            page_data = response.json()
             
-            # Extract pages from response
-            pages_data = data.get('data', [])
-            
-            formatted_pages = []
-            for page in pages_data:
-                formatted_pages.append({
-                    'id': page['id'],
-                    'name': page['name'],
-                    'category': page.get('category', 'Unknown'),
-                    'followers': page.get('followers_count', 0),
-                    'likes': page.get('fan_count', 0)
-                })
-
             return {
                 'success': True,
-                'pages': formatted_pages,
-                'count': len(formatted_pages)
+                'pages': [{
+                    'id': page_data['id'],
+                    'name': page_data['name'],
+                    'category': page_data.get('category', 'Unknown'),
+                    'followers': page_data.get('followers_count', 0),
+                    'likes': page_data.get('fan_count', 0)
+                }],
+                'count': 1,
+                'note': 'Showing the Facebook page connected to this business'
             }
 
         except requests.exceptions.RequestException as e:
