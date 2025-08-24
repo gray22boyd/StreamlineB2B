@@ -492,6 +492,8 @@ Help {business_name} understand their business performance and make data-driven 
         """Execute a tool call from OpenAI"""
         function_name = tool_call.function.name
         # Handle arguments - might be string or already parsed
+        # DEBUG: Print for Railway deployment verification
+        print(f"🔧 TOOL CALL DEBUG: function={function_name}, args_type={type(tool_call.function.arguments)}")
         try:
             if isinstance(tool_call.function.arguments, str):
                 arguments = json.loads(tool_call.function.arguments)
