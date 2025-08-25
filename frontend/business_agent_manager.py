@@ -200,72 +200,7 @@ class BusinessAgentManager:
             # Get agent instance
             agent = self.get_agent_instance(agent_type)
 
-            # Fast-path command handling to avoid tool arg parsing issues
-            if agent_type == 'marketing':
-                normalized = user_message.strip().lower()
-                # Fast-path if the message contains the verb "post"
-                if 'post' in normalized:
-                    try:
-                        import re
-                        post_text = None
-                        # Prefer quoted content after post/say
-                        m = re.search(r"(?:post|say)\s+[\"']([^\"']+)[\"']", user_message, re.IGNORECASE)
-                        if not m:
-                            # Fallback: any quoted text in the message
-                            m = re.search(r"[\"']([^\"']+)[\"']", user_message)
-                        if m:
-                            post_text = m.group(1).strip()
-                        else:
-                            # Fallback: take words after 'post ' until ' to ' or end
-                            m = re.search(r"post\s+(.+?)(?:\s+to\b|$)", user_message, re.IGNORECASE)
-                            if m:
-                                post_text = m.group(1).strip()
-
-                        if post_text:
-                            post_result = agent.post_text(post_text)
-                            if isinstance(post_result, dict) and post_result.get('success'):
-                                response = f"Posted to Facebook: '{post_text}'"
-                            else:
-                                response = f"Failed to post: {post_result.get('error', 'Unknown error')}"
-                            # Save and return early
-                            self._save_conversation_message(conversation_id, user_message, response)
-                            return {
-                                'success': True,
-                                'response': response,
-                                'conversation_id': conversation_id,
-                                'agent_type': agent_type,
-                                'business_name': self.business_data['info']['name']
-                            }
-                    except Exception as fast_path_error:
-                        # If fast path fails, fall back to AI flow
-                        print(f"Fast path post error: {fast_path_error}")
-                        pass
-
-                # Fast-path for listing pages
-                if 'list pages' in normalized or 'list my pages' in normalized or 'show pages' in normalized:
-                    try:
-                        result = agent.list_pages()
-                        if isinstance(result, dict) and result.get('success'):
-                            pages = result.get('pages', [])
-                            if not pages:
-                                response = "No Facebook pages connected."
-                            else:
-                                # Concise formatting
-                                lines = [f"{p['name']} (id: {p['id']})" for p in pages]
-                                response = "Pages:\n- " + "\n- ".join(lines)
-                        else:
-                            response = f"Failed to list pages: {result.get('error', 'Unknown error')}"
-                        self._save_conversation_message(conversation_id, user_message, response)
-                        return {
-                            'success': True,
-                            'response': response,
-                            'conversation_id': conversation_id,
-                            'agent_type': agent_type,
-                            'business_name': self.business_data['info']['name']
-                        }
-                    except Exception as fast_path_error:
-                        print(f"Fast path list pages error: {fast_path_error}")
-                        pass
+            # Router pattern handles all tool routing dynamically
 
             # Process with AI
             response = self._process_with_ai(agent, agent_type, user_message, conversation_history)
@@ -435,19 +370,25 @@ Business Context:
 """
         
         if agent_type == 'marketing':
-            return base_prompt + f"""Your Role: Marketing Assistant
-You specialize in:
-- Facebook page management and posting
-- Social media content creation
-- Marketing analytics and insights
-- Campaign management
+            return base_prompt + f"""Your Role: Marketing Assistant for {business_name}
 
-You have access to {business_name}'s Facebook credentials and can:
-- Create and publish posts to their Facebook page
-- Check page analytics and insights
-- List page information and follower counts
+Available tools:
+- list_facebook_pages: Show Facebook pages and stats
+- post_to_facebook: Post text to Facebook (requires message)
+- post_image_to_facebook: Post image with caption (requires caption and image_url)
 
-Always ask for confirmation before posting content publicly."""
+Use the 'route' function to:
+- action="respond" for general questions, follow-ups, or explanations
+- action="tool" when user wants to use a specific tool
+- action="clarify" if required parameters are missing
+
+Examples:
+- "What can you do?" → respond
+- "List my pages" → tool: list_facebook_pages
+- "Post hello world" → tool: post_to_facebook with message="hello world"
+- "Post something" (no content) → clarify what to post
+
+Be concise and helpful."""
 
         elif agent_type == 'customer_service':
             return base_prompt + f"""Your Role: Customer Service Assistant
@@ -489,146 +430,136 @@ Help {business_name} understand their business performance and make data-driven 
         return messages
     
     def _get_agent_tools_for_openai(self, agent_type: str) -> List[Dict]:
-        """Get available tools for agent in OpenAI format"""
+        """Get single router tool for dynamic tool selection"""
+        # Build available tools list for this agent
+        available_tools = []
         if agent_type == 'marketing':
-            return [
-                {
-                    "type": "function",
-                    "function": {
-                        "name": "list_facebook_pages",
-                        "description": "List Facebook pages for this business with follower counts and basic info",
-                        "parameters": {
-                            "type": "object",
-                            "properties": {},
-                            "required": []
-                        }
-                    }
-                },
-                {
-                    "type": "function", 
-                    "function": {
-                        "name": "post_to_facebook",
-                        "description": "Post a text message to the business's Facebook page",
-                        "parameters": {
-                            "type": "object",
-                            "properties": {
-                                "message": {
-                                    "type": "string",
-                                    "description": "The text content to post"
-                                }
-                            },
-                            "required": ["message"]
-                        }
-                    }
-                },
-                {
-                    "type": "function",
-                    "function": {
-                        "name": "post_image_to_facebook", 
-                        "description": "Post an image with caption to the business's Facebook page",
-                        "parameters": {
-                            "type": "object",
-                            "properties": {
-                                "caption": {
-                                    "type": "string",
-                                    "description": "Caption text for the image"
-                                },
-                                "image_url": {
-                                    "type": "string",
-                                    "description": "URL of the image to post"
-                                }
-                            },
-                            "required": ["caption", "image_url"]
-                        }
-                    }
-                }
+            available_tools = [
+                {"name": "list_facebook_pages", "description": "List Facebook pages with follower counts", "parameters": {}},
+                {"name": "post_to_facebook", "description": "Post text to Facebook page", "parameters": {"message": "string (required)"}},
+                {"name": "post_image_to_facebook", "description": "Post image with caption to Facebook", "parameters": {"caption": "string (required)", "image_url": "string (required)"}}
             ]
         
-        # No tools for other agents yet
-        return []
+        # Single router tool that handles all intents
+        return [{
+            "type": "function",
+            "function": {
+                "name": "route",
+                "description": f"Route user intent to appropriate action. Available tools: {[t['name'] for t in available_tools]}",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "action": {
+                            "type": "string",
+                            "enum": ["respond", "tool", "clarify"],
+                            "description": "respond=answer directly, tool=use a tool, clarify=ask for missing info"
+                        },
+                        "message": {
+                            "type": "string",
+                            "description": "Required if action=respond or clarify. Direct response or clarification question."
+                        },
+                        "tool_name": {
+                            "type": "string",
+                            "enum": [t["name"] for t in available_tools],
+                            "description": "Required if action=tool. Which tool to use."
+                        },
+                        "parameters": {
+                            "type": "object",
+                            "description": "Required if action=tool. Parameters for the chosen tool."
+                        }
+                    },
+                    "required": ["action"]
+                }
+            }
+        }]
     
     def _process_openai_response(self, response, agent, agent_type: str) -> str:
-        """Process OpenAI response and handle tool calls"""
+        """Process OpenAI response using router pattern"""
         choice = response.choices[0]
         message = choice.message
         
-        # Check if OpenAI wants to call tools
-        if message.tool_calls:
-            # Execute tool calls and format responses properly
-            tool_results = []
-            for tool_call in message.tool_calls:
-                try:
-                    result = self._execute_openai_tool_call(agent, tool_call)
-                    tool_results.append({
-                        'name': tool_call.function.name,
-                        'result': result
-                    })
-                except Exception as e:
-                    tool_results.append({
-                        'name': tool_call.function.name,
-                        'error': str(e)
-                    })
+        # Check if model called the router tool
+        if message.tool_calls and message.tool_calls[0].function.name == "route":
+            tool_call = message.tool_calls[0]
             
-            # Let the AI format the tool results naturally
-            if tool_results:
-                try:
-                    # Create a follow-up message with tool results for the AI to interpret
-                    messages = [
-                        {"role": "system", "content": self._build_system_prompt(agent_type)},
-                        {"role": "user", "content": "Summarize the tool results briefly. No fluff."},
-                        {"role": "assistant", "content": f"Tool results: {tool_results}"}
-                    ]
+            try:
+                # Parse router arguments
+                if isinstance(tool_call.function.arguments, str):
+                    args = json.loads(tool_call.function.arguments)
+                else:
+                    args = tool_call.function.arguments or {}
+                
+                action = args.get("action")
+                
+                if action == "respond":
+                    return args.get("message", "I'm ready to help!")
+                
+                elif action == "clarify":
+                    return args.get("message", "Could you provide more details?")
+                
+                elif action == "tool":
+                    tool_name = args.get("tool_name")
+                    parameters = args.get("parameters", {})
                     
-                    print(f"🔧 FOLLOW-UP DEBUG: About to make follow-up OpenAI call")
-                    follow_up = self.openai_client.chat.completions.create(
-                        model="gpt-4",
-                        messages=messages,
-                        temperature=0.7,
-                        max_tokens=500
-                    )
+                    # Execute the tool
+                    result = self._execute_tool_by_name(agent, tool_name, parameters)
+                    return self._format_tool_result(tool_name, result)
+                
+                else:
+                    return "I didn't understand that action. How can I help you?"
                     
-                    return follow_up.choices[0].message.content
-                except Exception as e:
-                    print(f"🔧 FOLLOW-UP ERROR: {e}")
-                    # Fallback to simple response if follow-up fails
-                    if tool_results and len(tool_results) > 0:
-                        first_result = tool_results[0]
-                        if 'error' in first_result:
-                            return f"Error executing {first_result['name']}: {first_result['error']}"
-                        else:
-                            return f"Successfully executed {first_result['name']}: {first_result['result']}"
-                    return "Tool execution completed."
+            except Exception as e:
+                print(f"🔧 ROUTER ERROR: {e}")
+                return "I had trouble processing that request. Could you try rephrasing?"
         
-        # Return regular text response
+        # Return regular text response if no tool call
         return message.content or self._get_fallback_response(agent_type, "")
     
-    def _execute_openai_tool_call(self, agent, tool_call):
-        """Execute a tool call from OpenAI"""
-        function_name = tool_call.function.name
-        # Handle arguments - might be string or already parsed
-        # DEBUG: Print for Railway deployment verification - Force redeploy v2
-        print(f"🔧 TOOL CALL DEBUG: function={function_name}, args_type={type(tool_call.function.arguments)}")
-        print(f"🔧 ENV DEBUG: OPENAI_KEY present = {bool(os.getenv('OPENAI_API_KEY'))}")
-        print(f"🔧 ARGS DEBUG: Raw arguments = {tool_call.function.arguments}")
+    def _execute_tool_by_name(self, agent, tool_name: str, parameters: dict):
+        """Execute a tool by name with parameters"""
         try:
-            if isinstance(tool_call.function.arguments, str):
-                arguments = json.loads(tool_call.function.arguments)
-                print(f"🔧 ARGS PARSED: {arguments}")
+            if tool_name == "list_facebook_pages":
+                return agent.list_pages()
+            elif tool_name == "post_to_facebook":
+                message = parameters.get('message')
+                if not message:
+                    return {"success": False, "error": "Message parameter required"}
+                return agent.post_text(message)
+            elif tool_name == "post_image_to_facebook":
+                caption = parameters.get('caption')
+                image_url = parameters.get('image_url')
+                if not caption or not image_url:
+                    return {"success": False, "error": "Caption and image_url parameters required"}
+                return agent.post_image(caption, image_url)
             else:
-                arguments = tool_call.function.arguments or {}
-                print(f"🔧 ARGS DIRECT: {arguments}")
-        except (json.JSONDecodeError, TypeError) as e:
-            print(f"🔧 ARGS ERROR: {e}")
-            arguments = {}
+                return {"success": False, "error": f"Unknown tool: {tool_name}"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    def _format_tool_result(self, tool_name: str, result: dict) -> str:
+        """Format tool results into concise user-friendly text"""
+        if not isinstance(result, dict):
+            return str(result)
         
-        if function_name == "list_facebook_pages":
-            return agent.list_pages()
-        elif function_name == "post_to_facebook":
-            return agent.post_text(arguments['message'])
-        elif function_name == "post_image_to_facebook":
-            return agent.post_image(arguments['caption'], arguments['image_url'])
+        if not result.get('success', True):
+            error = result.get('error', 'Unknown error')
+            return f"Error: {error}"
+        
+        if tool_name == "list_facebook_pages":
+            pages = result.get('pages', [])
+            if not pages:
+                return "No Facebook pages found."
+            lines = [f"• {p['name']} ({p.get('followers', 0)} followers)" for p in pages]
+            return "Facebook pages:\n" + "\n".join(lines)
+        
+        elif tool_name == "post_to_facebook":
+            return f"✅ Posted to Facebook successfully"
+        
+        elif tool_name == "post_image_to_facebook":
+            return f"✅ Posted image to Facebook successfully"
+        
         else:
-            raise ValueError(f"Unknown tool: {function_name}")
+            return "✅ Task completed"
     
     def _get_fallback_response(self, agent_type: str, user_message: str) -> str:
         """Fallback response when OpenAI fails"""
