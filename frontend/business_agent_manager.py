@@ -203,14 +203,25 @@ class BusinessAgentManager:
             # Fast-path command handling to avoid tool arg parsing issues
             if agent_type == 'marketing':
                 normalized = user_message.strip().lower()
-                # Match patterns like: post "message" / post 'message'
-                if normalized.startswith('post '):
+                # Fast-path if the message contains the verb "post"
+                if 'post' in normalized:
                     try:
-                        # Extract quoted message content
                         import re
-                        m = re.search(r"post\s+[\"'](.+?)[\"']", user_message, re.IGNORECASE)
+                        post_text = None
+                        # Prefer quoted content after post/say
+                        m = re.search(r"(?:post|say)\s+[\"']([^\"']+)[\"']", user_message, re.IGNORECASE)
+                        if not m:
+                            # Fallback: any quoted text in the message
+                            m = re.search(r"[\"']([^\"']+)[\"']", user_message)
                         if m:
-                            post_text = m.group(1)
+                            post_text = m.group(1).strip()
+                        else:
+                            # Fallback: take words after 'post ' until ' to ' or end
+                            m = re.search(r"post\s+(.+?)(?:\s+to\b|$)", user_message, re.IGNORECASE)
+                            if m:
+                                post_text = m.group(1).strip()
+
+                        if post_text:
                             post_result = agent.post_text(post_text)
                             if isinstance(post_result, dict) and post_result.get('success'):
                                 response = f"Posted to Facebook: '{post_text}'"
