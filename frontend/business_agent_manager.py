@@ -241,6 +241,32 @@ class BusinessAgentManager:
                         print(f"Fast path post error: {fast_path_error}")
                         pass
 
+                # Fast-path for listing pages
+                if 'list pages' in normalized or 'list my pages' in normalized or 'show pages' in normalized:
+                    try:
+                        result = agent.list_pages()
+                        if isinstance(result, dict) and result.get('success'):
+                            pages = result.get('pages', [])
+                            if not pages:
+                                response = "No Facebook pages connected."
+                            else:
+                                # Concise formatting
+                                lines = [f"{p['name']} (id: {p['id']})" for p in pages]
+                                response = "Pages:\n- " + "\n- ".join(lines)
+                        else:
+                            response = f"Failed to list pages: {result.get('error', 'Unknown error')}"
+                        self._save_conversation_message(conversation_id, user_message, response)
+                        return {
+                            'success': True,
+                            'response': response,
+                            'conversation_id': conversation_id,
+                            'agent_type': agent_type,
+                            'business_name': self.business_data['info']['name']
+                        }
+                    except Exception as fast_path_error:
+                        print(f"Fast path list pages error: {fast_path_error}")
+                        pass
+
             # Process with AI
             response = self._process_with_ai(agent, agent_type, user_message, conversation_history)
             
@@ -301,7 +327,17 @@ class BusinessAgentManager:
         cur.close()
         
         if result and result['message_history']:
-            return json.loads(result['message_history'])
+            # message_history may be stored as TEXT (JSON string) or JSONB (already a list)
+            history = result['message_history']
+            if isinstance(history, str):
+                try:
+                    return json.loads(history)
+                except Exception:
+                    return []
+            if isinstance(history, list):
+                return history
+            # Unknown type
+            return []
         return []
     
     def _save_conversation_message(self, conversation_id: str, user_message: str, ai_response: str):
