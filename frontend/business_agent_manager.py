@@ -199,8 +199,38 @@ class BusinessAgentManager:
             
             # Get agent instance
             agent = self.get_agent_instance(agent_type)
-            
-            # Process with AI (will implement OpenAI integration next)
+
+            # Fast-path command handling to avoid tool arg parsing issues
+            if agent_type == 'marketing':
+                normalized = user_message.strip().lower()
+                # Match patterns like: post "message" / post 'message'
+                if normalized.startswith('post '):
+                    try:
+                        # Extract quoted message content
+                        import re
+                        m = re.search(r"post\s+[\"'](.+?)[\"']", user_message, re.IGNORECASE)
+                        if m:
+                            post_text = m.group(1)
+                            post_result = agent.post_text(post_text)
+                            if isinstance(post_result, dict) and post_result.get('success'):
+                                response = f"Posted to Facebook: '{post_text}'"
+                            else:
+                                response = f"Failed to post: {post_result.get('error', 'Unknown error')}"
+                            # Save and return early
+                            self._save_conversation_message(conversation_id, user_message, response)
+                            return {
+                                'success': True,
+                                'response': response,
+                                'conversation_id': conversation_id,
+                                'agent_type': agent_type,
+                                'business_name': self.business_data['info']['name']
+                            }
+                    except Exception as fast_path_error:
+                        # If fast path fails, fall back to AI flow
+                        print(f"Fast path post error: {fast_path_error}")
+                        pass
+
+            # Process with AI
             response = self._process_with_ai(agent, agent_type, user_message, conversation_history)
             
             # Save conversation update
@@ -347,8 +377,8 @@ class BusinessAgentManager:
         business_name = self.business_data['info']['name']
         business_settings = self.business_data['settings']
         
-        base_prompt = f"""You are an AI assistant for {business_name}, a business automation platform. 
-You are professional, helpful, and knowledgeable about business operations.
+        base_prompt = f"""You are an AI assistant for {business_name}, a business automation platform.
+Be concise and direct. Prefer bullet points. Avoid fluff.
 
 Business Context:
 - Business Name: {business_name}
@@ -498,7 +528,7 @@ Help {business_name} understand their business performance and make data-driven 
                     # Create a follow-up message with tool results for the AI to interpret
                     messages = [
                         {"role": "system", "content": self._build_system_prompt(agent_type)},
-                        {"role": "user", "content": "Please provide a friendly, human response based on these tool results."},
+                        {"role": "user", "content": "Summarize the tool results briefly. No fluff."},
                         {"role": "assistant", "content": f"Tool results: {tool_results}"}
                     ]
                     
