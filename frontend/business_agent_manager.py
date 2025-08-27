@@ -385,10 +385,12 @@ Use the 'route' function to:
 Examples:
 - "What can you do?" → respond
 - "List my pages" → tool: list_facebook_pages
-- "Post hello world" → tool: post_to_facebook with message="hello world"
+- "Post hello world" → tool: post_to_facebook with parameters {{"message": "hello world"}}
+- "Post 'testing from web'" → tool: post_to_facebook with parameters {{"message": "testing from web"}}
+- "please post 'abc' to page" → tool: post_to_facebook with parameters {{"message": "abc"}}
 - "Post something" (no content) → clarify what to post
 
-Be concise and helpful."""
+Extract quoted text as message content. Be concise and helpful."""
 
         elif agent_type == 'customer_service':
             return base_prompt + f"""Your Role: Customer Service Assistant
