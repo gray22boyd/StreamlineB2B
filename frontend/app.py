@@ -113,6 +113,10 @@ def login():
                 'agents': user['agents'] if user['agents'] and user['agents'][0] else []
             }
             
+            # Check if user needs to accept terms
+            if not user.get('terms_accepted_at'):
+                session['needs_terms_acceptance'] = True
+            
             # Redirect super admin to admin dashboard, regular users to chat
             if is_super_admin:
                 return redirect(url_for('admin_dashboard'))
@@ -276,6 +280,44 @@ def chat():
 def test_endpoint():
     """Simple test endpoint to check if basic API works"""
     return jsonify({'status': 'OK', 'message': 'API is working'})
+
+
+@app.route('/terms-of-service')
+def terms_of_service():
+    """Terms of Service page"""
+    return render_template('terms_of_service.html')
+
+
+@app.route('/privacy-policy')
+def privacy_policy():
+    """Privacy Policy page"""
+    return render_template('privacy_policy.html')
+
+
+@app.route('/accept-terms', methods=['POST'])
+def accept_terms():
+    """Accept terms and privacy policy"""
+    if 'user' not in session:
+        return jsonify({'error': 'Not authenticated'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("""
+            UPDATE users 
+            SET terms_accepted_at = CURRENT_TIMESTAMP 
+            WHERE id = %s
+        """, (session['user']['id'],))
+        conn.commit()
+        cur.close()
+        
+        # Remove the flag from session
+        session.pop('needs_terms_acceptance', None)
+        
+        return jsonify({'success': True})
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/agents/available', methods=['GET'])
 def get_available_agents():
