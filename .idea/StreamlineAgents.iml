@@ -6,7 +6,7 @@
       <excludeFolder url="file://$MODULE_DIR$/.venv/bin/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/.venv1" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.12 virtualenv at ~/PycharmProjects/StreamlineB2B/.venv" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.12 (StreamlineAgents)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

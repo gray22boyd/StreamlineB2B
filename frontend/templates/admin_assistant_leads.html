@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Assistant Leads - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Assistant Leads</h2>
+            <p class="text-muted">Visitors who interacted with the assistant</p>
+        </div>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+        </a>
+    </div>
+
+    {% if leads %}
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Date</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Initial Query</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lead in leads %}
+                <tr>
+                    <td>{{ lead.created_at.strftime('%Y-%m-%d %H:%M') if lead.created_at else 'N/A' }}</td>
+                    <td>{{ lead.name }}</td>
+                    <td><a href="mailto:{{ lead.email }}">{{ lead.email }}</a></td>
+                    <td>
+                        {% if lead.initial_query %}
+                            {{ lead.initial_query[:50] }}{% if lead.initial_query|length > 50 %}...{% endif %}
+                        {% else %}
+                            <span class="text-muted">N/A</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if lead.contacted %}
+                            <span class="badge bg-success">Contacted</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">New</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>No leads captured yet.
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.table-responsive {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 20px;
+}
+</style>
+{% endblock %}
+
