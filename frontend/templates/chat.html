@@ -178,21 +178,35 @@
 </style>
 
 <script>
+// Client state
+let currentAgent = 'marketing';
+
 // Chat functionality
-document.getElementById('chat-form').addEventListener('submit', function(e) {
+document.getElementById('chat-form').addEventListener('submit', async function(e) {
     e.preventDefault();
 
     const messageInput = document.getElementById('message-input');
     const message = messageInput.value.trim();
 
-    if (message) {
-        addMessage(message, 'user');
-        messageInput.value = '';
+    if (!message) return;
 
-        // Simulate agent response
-        setTimeout(() => {
-            addMessage("I received your message: '" + message + "'. How can I help you with that?", 'assistant');
-        }, 1000);
+    addMessage(message, 'user');
+    messageInput.value = '';
+
+    try {
+        const resp = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ agent: currentAgent, message })
+        });
+        const data = await resp.json();
+        if (data.error) {
+            addMessage('Error: ' + data.error, 'assistant');
+            return;
+        }
+        if (data.text) addMessage(data.text, 'assistant');
+    } catch (err) {
+        addMessage('Network error: ' + (err?.message || err), 'assistant');
     }
 });
 
@@ -221,15 +235,17 @@ document.querySelectorAll('.agent-item').forEach(item => {
         document.querySelectorAll('.agent-item').forEach(i => i.classList.remove('active'));
         this.classList.add('active');
 
+        // Set currentAgent from data-agent
+        currentAgent = this.getAttribute('data-agent') || 'marketing';
+
         // Update header
-        const agentName = this.textContent.trim();
         document.getElementById('current-agent').innerHTML = this.innerHTML;
 
         // Clear chat and add welcome message
         document.getElementById('chat-messages').innerHTML = `
             <div class="message assistant-message">
                 <div class="message-content">
-                    <strong>${agentName}:</strong> Hello! I'm ready to assist you. What can I help you with?
+                    <strong>${this.textContent.trim()}:</strong> Hello! I'm ready to assist you. What can I help you with?
                 </div>
                 <div class="message-time">Just now</div>
             </div>

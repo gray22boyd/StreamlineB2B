@@ -1,0 +1,191 @@
+<!-- AI Assistant Widget for Streamline Automation -->
+<div id="assistant-widget">
+    <div id="assistant-button" onclick="toggleAssistant()">
+        <i class="fas fa-comments"></i>
+        <span class="pulse-ring"></span>
+    </div>
+
+    <div id="assistant-window" style="display: none;">
+        <div class="assistant-header">
+            <div class="d-flex align-items-center">
+                <div class="assistant-avatar"><i class="fas fa-robot"></i></div>
+                <div>
+                    <strong>Streamline Assistant</strong>
+                    <div class="assistant-status"><span class="status-dot"></span> Online</div>
+                </div>
+            </div>
+            <button class="assistant-close" onclick="toggleAssistant()"><i class="fas fa-times"></i></button>
+        </div>
+
+        <div class="assistant-messages" id="assistant-messages">
+            <div class="assistant-message bot-message">
+                <div class="message-content">
+                    👋 Hi! I'm the Streamline Assistant. I can help you learn about our custom AI agents and automation solutions. What would you like to know?
+                </div>
+            </div>
+        </div>
+
+        <div class="assistant-input">
+            <form id="assistant-form" onsubmit="sendAssistantMessage(event)">
+                <input type="text" id="assistant-input-field" placeholder="Ask me anything..." autocomplete="off"/>
+                <button type="submit"><i class="fas fa-paper-plane"></i></button>
+            </form>
+            <div class="assistant-footer-text">Powered by Streamline Automation</div>
+        </div>
+    </div>
+
+    <div id="lead-modal" style="display: none;">
+        <div class="lead-modal-content">
+            <h5>Interested in learning more?</h5>
+            <p>Leave your contact info and we'll reach out with details about how we can help your business.</p>
+            <form id="lead-form" onsubmit="submitAssistantLead(event)">
+                <input type="text" id="lead-name" placeholder="Your name" required/>
+                <input type="email" id="lead-email" placeholder="Your email" required/>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn-primary-lead">Submit</button>
+                    <button type="button" class="btn-secondary-lead" onclick="closeLeadModal()">Maybe Later</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+#assistant-widget{position:fixed;bottom:20px;right:20px;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+#assistant-button{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px rgba(102,126,234,.4);transition:all .3s ease;position:relative}
+#assistant-button:hover{transform:scale(1.1);box-shadow:0 6px 16px rgba(102,126,234,.6)}
+#assistant-button i{font-size:28px}
+.pulse-ring{position:absolute;width:100%;height:100%;border:3px solid #667eea;border-radius:50%;animation:pulse 2s infinite;opacity:0}
+@keyframes pulse{0%{transform:scale(1);opacity:1}100%{transform:scale(1.5);opacity:0}}
+#assistant-window{position:absolute;bottom:80px;right:0;width:380px;max-width:calc(100vw - 40px);height:600px;max-height:calc(100vh - 120px);background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.12);flex-direction:column;overflow:hidden}
+.assistant-header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:20px;display:flex;justify-content:space-between;align-items:center}
+.assistant-avatar{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;margin-right:12px;font-size:20px}
+.assistant-status{font-size:12px;opacity:.9;display:flex;align-items:center;margin-top:2px}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;margin-right:6px;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.assistant-close{background:0 0;border:none;color:#fff;font-size:24px;cursor:pointer;padding:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background .2s}
+.assistant-close:hover{background:rgba(255,255,255,.2)}
+.assistant-messages{flex:1;overflow-y:auto;padding:20px;background:#f8f9fa;height:430px}
+.assistant-message{margin-bottom:16px;animation:slideIn .3s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.message-content{padding:12px 16px;border-radius:18px;max-width:85%;word-wrap:break-word;line-height:1.5}
+.bot-message .message-content{background:#fff;color:#2c3e50;border-bottom-left-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.user-message{display:flex;justify-content:flex-end}
+.user-message .message-content{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border-bottom-right-radius:4px}
+.typing-indicator{display:flex;align-items:center;padding:12px 16px;background:#fff;border-radius:18px;border-bottom-left-radius:4px;width:fit-content;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.typing-indicator span{height:8px;width:8px;background:#667eea;border-radius:50%;display:inline-block;margin:0 2px;animation:typing 1.4s infinite}
+.typing-indicator span:nth-child(2){animation-delay:.2s}
+.typing-indicator span:nth-child(3){animation-delay:.4s}
+@keyframes typing{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-10px)}}
+.assistant-input{padding:16px;background:#fff;border-top:1px solid #e5e7eb}
+#assistant-form{display:flex;gap:8px}
+#assistant-input-field{flex:1;padding:12px 16px;border:1px solid #e5e7eb;border-radius:24px;font-size:14px;outline:0;transition:border-color .2s}
+#assistant-input-field:focus{border-color:#667eea}
+#assistant-form button{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s}
+#assistant-form button:hover{transform:scale(1.05)}
+.assistant-footer-text{text-align:center;font-size:11px;color:#9ca3af;margin-top:8px}
+#lead-modal{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);align-items:center;justify-content:center;border-radius:16px}
+.lead-modal-content{background:#fff;padding:30px;border-radius:12px;width:90%;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.lead-modal-content h5{margin-bottom:12px;color:#2c3e50}
+.lead-modal-content p{font-size:14px;color:#6c757d;margin-bottom:20px}
+#lead-form input{width:100%;padding:12px;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:12px;font-size:14px}
+#lead-form input:focus{outline:0;border-color:#667eea}
+#lead-form button{padding:12px 24px;border-radius:8px;border:none;cursor:pointer;font-size:14px;font-weight:500;transition:all .2s;flex:1}
+.btn-primary-lead{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff}
+.btn-secondary-lead{background:#e5e7eb;color:#6c757d}
+@media (max-width:480px){#assistant-window{width:calc(100vw - 20px);height:calc(100vh - 100px);bottom:10px;right:10px}#assistant-button{width:56px;height:56px}#assistant-button i{font-size:24px}}
+</style>
+
+<script>
+let assistantSessionId='session_'+Date.now()+'_'+Math.random().toString(36).substr(2,9);
+let assistantMsgCount=0;
+let assistantLeadCaptured=false;
+
+function toggleAssistant(){
+const w=document.getElementById('assistant-window');
+w.style.display=w.style.display==='none'?'flex':'none';
+if(w.style.display==='flex')document.getElementById('assistant-input-field').focus();
+}
+
+async function sendAssistantMessage(e){
+e.preventDefault();
+const input=document.getElementById('assistant-input-field');
+const msg=input.value.trim();
+if(!msg)return;
+addAssistantMessage(msg,'user');
+input.value='';
+assistantMsgCount++;
+showAssistantTyping();
+try{
+const res=await fetch('/api/assistant/chat',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({message:msg,session_id:assistantSessionId})
+});
+const data=await res.json();
+removeAssistantTyping();
+addAssistantMessage(data.response||'Sorry, something went wrong.','bot');
+if(assistantMsgCount>=3&&!assistantLeadCaptured)setTimeout(showLeadModal,2000);
+}catch(err){
+removeAssistantTyping();
+addAssistantMessage('Sorry, I\'m having trouble. Please try again.','bot');
+}
+}
+
+function addAssistantMessage(content,sender){
+const m=document.getElementById('assistant-messages');
+const div=document.createElement('div');
+div.className='assistant-message '+sender+'-message';
+div.innerHTML='<div class="message-content">'+escapeHtml(content)+'</div>';
+m.appendChild(div);
+m.scrollTop=m.scrollHeight;
+}
+
+function showAssistantTyping(){
+const m=document.getElementById('assistant-messages');
+const div=document.createElement('div');
+div.className='assistant-message bot-message';
+div.id='typing-indicator';
+div.innerHTML='<div class="typing-indicator"><span></span><span></span><span></span></div>';
+m.appendChild(div);
+m.scrollTop=m.scrollHeight;
+}
+
+function removeAssistantTyping(){
+const t=document.getElementById('typing-indicator');
+if(t)t.remove();
+}
+
+function showLeadModal(){
+document.getElementById('lead-modal').style.display='flex';
+}
+
+function closeLeadModal(){
+document.getElementById('lead-modal').style.display='none';
+}
+
+async function submitAssistantLead(e){
+e.preventDefault();
+const name=document.getElementById('lead-name').value;
+const email=document.getElementById('lead-email').value;
+try{
+await fetch('/api/assistant/lead',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({name,email,session_id:assistantSessionId})
+});
+assistantLeadCaptured=true;
+closeLeadModal();
+addAssistantMessage('Thanks! We\'ll be in touch soon.','bot');
+}catch(err){
+alert('Error submitting. Please email support@streamlineautomation.co');
+}
+}
+
+function escapeHtml(text){
+const div=document.createElement('div');
+div.textContent=text;
+return div.innerHTML;
+}
+</script>
+

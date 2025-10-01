@@ -24,6 +24,9 @@
                         <a href="{{ url_for('admin_users') }}" class="nav-link text-white">
                             👥 Users
                         </a>
+                        <a href="{{ url_for('admin_assistant_leads') }}" class="nav-link text-white">
+                            💬 Assistant Leads
+                        </a>
                         <a href="{{ url_for('chat') }}" class="nav-link text-white">
                             🤖 Agent Chat
                         </a>
@@ -106,6 +109,9 @@
                                 </a>
                                 <a href="{{ url_for('admin_users') }}" class="btn btn-success me-2 mb-2">
                                     👥 Manage Users
+                                </a>
+                                <a href="{{ url_for('admin_assistant_leads') }}" class="btn btn-warning me-2 mb-2">
+                                    💬 Assistant Leads
                                 </a>
                                 <a href="{{ url_for('chat') }}" class="btn btn-info me-2 mb-2">
                                     🤖 Test Agents

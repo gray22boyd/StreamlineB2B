@@ -1,14 +1,39 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 import psycopg2
 import psycopg2.extras
 import bcrypt
 import os
 from dotenv import load_dotenv
+from pathlib import Path
+from authlib.integrations.flask_client import OAuth
+from agent_registry import build_registry
+from utils.assistant_rag import AssistantRAG
 
-load_dotenv()
+# Load env from project root and frontend directory to support different run contexts
+project_root_env = Path(__file__).resolve().parent.parent / '.env'
+frontend_env = Path(__file__).resolve().parent / '.env'
+load_dotenv(dotenv_path=project_root_env, override=False)
+load_dotenv(dotenv_path=frontend_env, override=False)
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-change-this-later')
+
+# Build agent registry (supports remote MCP via env)
+REGISTRY = build_registry()
+
+# Initialize assistant RAG system
+assistant_rag = AssistantRAG()
+
+oauth = OAuth(app)
+oauth.register(
+    name='facebook',
+    client_id=os.getenv('FACEBOOK_CLIENT_ID'),
+    client_secret=os.getenv('FACEBOOK_CLIENT_SECRET'),
+    access_token_url='https://graph.facebook.com/oauth/access_token',
+    authorize_url='https://www.facebook.com/dialog/oauth',
+    api_base_url='https://graph.facebook.com/',
+    client_kwargs={'scope': 'email'}
+)
 
 
 def get_db_connection():
@@ -122,6 +147,45 @@ def login():
             flash('Invalid email or password', 'error')
 
     return render_template('login.html')
+
+@app.route('/login/facebook')
+def login_facebook():
+    redirect_uri = url_for('facebook_callback', _external=True)
+    return oauth.facebook.authorize_redirect(redirect_uri)
+
+@app.route('/auth/facebook/callback')
+def facebook_callback():
+    try:
+        token = oauth.facebook.authorize_access_token()
+        resp = oauth.facebook.get('me?fields=id,name,email')
+        profile = resp.json()
+    except Exception:
+        flash('Facebook login failed. Please try again.', 'error')
+        return redirect(url_for('login'))
+
+    email = (profile.get('email') or '').lower().strip()
+    if not email:
+        flash('Your Facebook account has no email. Please use email/password or contact admin.', 'error')
+        return redirect(url_for('login'))
+
+    user = get_user_by_email(email)
+    if not user:
+        flash('No account found for this Facebook email. Contact your administrator.', 'error')
+        return redirect(url_for('login'))
+
+    is_super_admin = user.get('is_super_admin', False)
+    session['user'] = {
+        'id': str(user['id']),
+        'email': user['email'],
+        'name': user['name'],
+        'business_id': str(user['business_id']) if user['business_id'] else None,
+        'business_name': user.get('business_name', 'Admin'),
+        'role': user['role'],
+        'is_super_admin': is_super_admin,
+        'agents': user['agents'] if user['agents'] and user['agents'][0] else []
+    }
+
+    return redirect(url_for('admin_dashboard' if is_super_admin else 'chat'))
 
 
 # Registration removed - admin creates accounts directly in database
@@ -296,6 +360,134 @@ def terms():
     """Terms of Service"""
     return render_template('terms.html')
 
+
+# --------- API: Assistant Chat (Public) ----------
+@app.route('/api/assistant/chat', methods=['POST'])
+def assistant_chat():
+    """Public assistant endpoint for website visitors"""
+    data = request.get_json(silent=True) or {}
+    message = (data.get('message') or '').strip()
+    session_id = data.get('session_id')
+    
+    if not message:
+        return jsonify({"error": "Empty message"}), 400
+    
+    try:
+        result = assistant_rag.generate_response(message, session_id=session_id)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "response": "I'm having trouble right now. Please email support@streamlineautomation.co"
+        }), 500
+
+
+@app.route('/api/assistant/lead', methods=['POST'])
+def assistant_lead():
+    """Capture lead information from assistant conversation"""
+    data = request.get_json(silent=True) or {}
+    name = (data.get('name') or '').strip()
+    email = (data.get('email') or '').strip()
+    initial_query = data.get('initial_query')
+    session_id = data.get('session_id')
+    
+    if not name or not email:
+        return jsonify({"error": "Name and email required"}), 400
+    
+    # Basic email validation
+    if '@' not in email or '.' not in email:
+        return jsonify({"error": "Invalid email"}), 400
+    
+    try:
+        result = assistant_rag.save_lead(name, email, initial_query, session_id)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+# Admin endpoint to view captured leads
+@app.route('/admin/assistant-leads')
+@admin_required
+def admin_assistant_leads():
+    """View captured assistant leads"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    cur.execute("""
+        SELECT id, name, email, initial_query, created_at, contacted, notes
+        FROM assistant_leads
+        ORDER BY created_at DESC
+        LIMIT 100
+    """)
+    leads = cur.fetchall()
+    
+    cur.close()
+    conn.close()
+    
+    return render_template('admin_assistant_leads.html', 
+                         leads=leads,
+                         user=session['user'])
+
+
+# --------- API: Chat → MCP tools ----------
+@app.route('/api/chat', methods=['POST'])
+def api_chat():
+    if 'user' not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    data = request.get_json(silent=True) or {}
+    agent = (data.get('agent') or 'marketing').strip()
+    message = (data.get('message') or '').strip()
+    if not message:
+        return jsonify({"error": "Empty message"}), 400
+
+    # Determine business_id: admin override > user business
+    business_id = None
+    if session['user'].get('is_super_admin') and session.get('admin_business_context'):
+        business_id = session['admin_business_context'].get('business_id')
+    if not business_id:
+        business_id = session['user'].get('business_id')
+    if not business_id:
+        return jsonify({"error": "No business selected/assigned"}), 400
+
+    adapter = REGISTRY.get(agent)
+    if not adapter:
+        return jsonify({"error": f"Unknown agent '{agent}'"}), 400
+
+    try:
+        lower = message.lower()
+
+        if lower.startswith('/list_pages'):
+            result = adapter.call_tool('list_pages', {"business_id": business_id})
+            if result.get('success'):
+                pages = result.get('pages', [])
+                if not pages:
+                    return jsonify({"text": "No pages found."})
+                lines = [f"- {p.get('name')} (ID: {p.get('id')})" for p in pages]
+                return jsonify({"text": "Pages:\n" + "\n".join(lines)})
+            return jsonify({"text": f"Error: {result.get('error') or 'unknown'}"})
+
+        if lower.startswith('/post_text '):
+            text_msg = message[len('/post_text '):].strip()
+            if not text_msg:
+                return jsonify({"text": "Usage: /post_text <message>"})
+            result = adapter.call_tool('post_text', {"business_id": business_id, "message": text_msg})
+            return jsonify({"text": result.get('message') or result.get('error') or 'Done'})
+
+        if lower.startswith('/post_image '):
+            payload = message[len('/post_image '):]
+            if '|' not in payload:
+                return jsonify({"text": "Usage: /post_image <image_url> | <caption>"})
+            image_url, caption = [x.strip() for x in payload.split('|', 1)]
+            if not image_url or not caption:
+                return jsonify({"text": "Usage: /post_image <image_url> | <caption>"})
+            result = adapter.call_tool('post_image', {"business_id": business_id, "caption": caption, "image_url": image_url})
+            return jsonify({"text": result.get('message') or result.get('error') or 'Done'})
+
+        # Help
+        return jsonify({"text": "Commands:\n- /list_pages\n- /post_text <message>\n- /post_image <image_url> | <caption>"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     # Production-ready configuration

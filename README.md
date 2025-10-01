@@ -87,20 +87,17 @@ response = cs_tools.handle_inquiry("How do I reset my password?")
 
 ### Marketing Agent
 
-The marketing agent handles Facebook Business operations:
+The marketing agent can run as an HTTP MCP microservice or be called in-process.
 
-```python
-from agents.marketing_agent.tools import FacebookMarketingTools
+HTTP MCP (production):
 
-# Initialize marketing tools
-marketing_tools = FacebookMarketingTools(business_id="your_business_id")
-
-# Post to Facebook page
-marketing_tools.post_text("Hello from StreamlineB2B!")
-
-# Get page insights
-insights = marketing_tools.get_page_insights()
+```bash
+python -m agents.marketing_agent.mcp_server
+# Env:
+# MCP_HOST=0.0.0.0 MCP_PORT=8010 MCP_AUTH_TOKEN=... DATABASE_URL=... FACEBOOK_APP_ID=... FACEBOOK_APP_SECRET=...
 ```
+
+Flask will call this service via `MCP_HTTP_BASE_URL` and `MCP_AUTH_TOKEN`.
 
 ### PDF Processing
 
