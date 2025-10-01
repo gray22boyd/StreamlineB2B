@@ -27,11 +27,28 @@ class AssistantRAG:
     
     def retrieve_context(self, query: str, limit: int = 5) -> list:
         """Retrieve relevant context from knowledge base using vector similarity"""
-        embedding = self.embed_query(query)
-        
         supabase = SupabaseClient(customer_schema="public")
+        
         try:
-            # Use pgvector's <=> operator for cosine distance
+            # Check for pricing-related keywords
+            pricing_keywords = ['cost', 'price', 'pricing', 'expensive', 'fee', 'charge', 'pay']
+            query_lower = query.lower()
+            
+            if any(keyword in query_lower for keyword in pricing_keywords):
+                # For pricing questions, prioritize pricing chunks
+                supabase.cur.execute(f"""
+                    SELECT text_content, chunk_type, 1.0 as similarity
+                    FROM {self.table_name}
+                    WHERE chunk_type = 'pricing'
+                    LIMIT 2
+                """)
+                pricing_results = supabase.cur.fetchall()
+                if pricing_results:
+                    supabase.close()
+                    return pricing_results
+            
+            # Standard vector similarity search
+            embedding = self.embed_query(query)
             supabase.cur.execute(f"""
                 SELECT text_content, chunk_type, similarity
                 FROM (
