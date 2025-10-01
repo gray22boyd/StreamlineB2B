@@ -34,20 +34,6 @@
         </div>
     </div>
 
-    <div id="lead-modal" style="display: none;">
-        <div class="lead-modal-content">
-            <h5>Interested in learning more?</h5>
-            <p>Leave your contact info and we'll reach out with details about how we can help your business.</p>
-            <form id="lead-form" onsubmit="submitAssistantLead(event)">
-                <input type="text" id="lead-name" placeholder="Your name" required/>
-                <input type="email" id="lead-email" placeholder="Your email" required/>
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn-primary-lead">Submit</button>
-                    <button type="button" class="btn-secondary-lead" onclick="closeLeadModal()">Maybe Later</button>
-                </div>
-            </form>
-        </div>
-    </div>
 </div>
 
 {% raw %}
@@ -85,15 +71,6 @@
 #assistant-form button{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s}
 #assistant-form button:hover{transform:scale(1.05)}
 .assistant-footer-text{text-align:center;font-size:11px;color:#9ca3af;margin-top:8px}
-#lead-modal{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);align-items:center;justify-content:center;border-radius:16px}
-.lead-modal-content{background:#fff;padding:30px;border-radius:12px;width:90%;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.2)}
-.lead-modal-content h5{margin-bottom:12px;color:#2c3e50}
-.lead-modal-content p{font-size:14px;color:#6c757d;margin-bottom:20px}
-#lead-form input{width:100%;padding:12px;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:12px;font-size:14px}
-#lead-form input:focus{outline:0;border-color:#667eea}
-#lead-form button{padding:12px 24px;border-radius:8px;border:none;cursor:pointer;font-size:14px;font-weight:500;transition:all .2s;flex:1}
-.btn-primary-lead{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff}
-.btn-secondary-lead{background:#e5e7eb;color:#6c757d}
 @media (max-width:480px){#assistant-window{width:calc(100vw - 20px);height:calc(100vh - 100px);bottom:10px;right:10px}#assistant-button{width:56px;height:56px}#assistant-button i{font-size:24px}}
 </style>
 {% endraw %}
@@ -128,7 +105,7 @@ body:JSON.stringify({message:msg,session_id:assistantSessionId})
 const data=await res.json();
 removeAssistantTyping();
 addAssistantMessage(data.response||'Sorry, something went wrong.','bot');
-if(assistantMsgCount>=3&&!assistantLeadCaptured)setTimeout(showLeadModal,2000);
+if(data.lead_captured)assistantLeadCaptured=true;
 }catch(err){
 removeAssistantTyping();
 addAssistantMessage('Sorry, I\'m having trouble. Please try again.','bot');
@@ -157,32 +134,6 @@ m.scrollTop=m.scrollHeight;
 function removeAssistantTyping(){
 const t=document.getElementById('typing-indicator');
 if(t)t.remove();
-}
-
-function showLeadModal(){
-document.getElementById('lead-modal').style.display='flex';
-}
-
-function closeLeadModal(){
-document.getElementById('lead-modal').style.display='none';
-}
-
-async function submitAssistantLead(e){
-e.preventDefault();
-const name=document.getElementById('lead-name').value;
-const email=document.getElementById('lead-email').value;
-try{
-await fetch('/api/assistant/lead',{
-method:'POST',
-headers:{'Content-Type':'application/json'},
-body:JSON.stringify({name,email,session_id:assistantSessionId})
-});
-assistantLeadCaptured=true;
-closeLeadModal();
-addAssistantMessage('Thanks! We\'ll be in touch soon.','bot');
-}catch(err){
-alert('Error submitting. Please email support@streamlineautomation.co');
-}
 }
 
 function escapeHtml(text){

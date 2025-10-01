@@ -278,13 +278,15 @@ Context:
                 session_id=session_id
             )
             
-            # Send email notification
-            self.send_lead_email(
-                name=lead_data['name'],
-                email=lead_data['email'],
-                business_type=lead_data['business_type'],
-                initial_query=lead_data.get('initial_query')
-            )
+            # Send email notification (disabled due to Railway network restrictions)
+            # TODO: Set up SendGrid or Resend for email notifications
+            print(f"✅ New lead captured: {lead_data['name']} ({lead_data['email']}) - {lead_data['business_type']}")
+            # self.send_lead_email(
+            #     name=lead_data['name'],
+            #     email=lead_data['email'],
+            #     business_type=lead_data['business_type'],
+            #     initial_query=lead_data.get('initial_query')
+            # )
             
             # Clear pending lead
             del self.pending_leads[session_id]
