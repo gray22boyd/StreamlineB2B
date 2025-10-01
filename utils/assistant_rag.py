@@ -49,22 +49,29 @@ class AssistantRAG:
             
             # Standard vector similarity search
             embedding = self.embed_query(query)
+            
+            # First, try to get ANY results without threshold
             supabase.cur.execute(f"""
-                SELECT text_content, chunk_type, similarity
-                FROM (
-                    SELECT 
-                        text_content,
-                        chunk_type,
-                        1 - (embedding <=> %s::vector) as similarity
-                    FROM {self.table_name}
-                    ORDER BY embedding <=> %s::vector
-                    LIMIT %s
-                ) sub
-                WHERE similarity > 0.5
-                ORDER BY similarity DESC
+                SELECT 
+                    text_content,
+                    chunk_type,
+                    1 - (embedding <=> %s::vector) as similarity
+                FROM {self.table_name}
+                ORDER BY embedding <=> %s::vector
+                LIMIT %s
             """, (embedding, embedding, limit))
             
+            # Debug: print similarities
             results = supabase.cur.fetchall()
+            if results:
+                print(f"DEBUG: Found {len(results)} results with similarities: {[r['similarity'] for r in results]}")
+            else:
+                print(f"DEBUG: No results found in knowledge base!")
+                # Check if table has any data
+                supabase.cur.execute(f"SELECT COUNT(*) as count FROM {self.table_name}")
+                count = supabase.cur.fetchone()
+                print(f"DEBUG: Total chunks in database: {count['count']}")
+            
             supabase.close()
             return results
         except Exception as e:
