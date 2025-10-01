@@ -215,14 +215,17 @@ def upload_to_database(chunks: list):
         # Insert new chunks
         print(f"Uploading {len(chunks)} chunks...")
         for i, chunk in enumerate(chunks):
+            # Convert embedding list to pgvector format
+            embedding_str = '[' + ','.join(str(x) for x in chunk['embedding']) + ']'
+            
             supabase.cur.execute("""
                 INSERT INTO assistant_knowledge_base 
                 (text_content, chunk_type, embedding, chunk_index, created_at)
-                VALUES (%s, %s, %s, %s, NOW())
+                VALUES (%s, %s, %s::vector, %s, NOW())
             """, (
                 chunk['text'],
                 chunk['chunk_type'],
-                chunk['embedding'],
+                embedding_str,
                 i
             ))
             

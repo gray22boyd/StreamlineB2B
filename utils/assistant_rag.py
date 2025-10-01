@@ -50,6 +50,9 @@ class AssistantRAG:
             # Standard vector similarity search
             embedding = self.embed_query(query)
             
+            # Convert embedding list to pgvector string format
+            embedding_str = '[' + ','.join(str(x) for x in embedding) + ']'
+            
             # First, try to get ANY results without threshold
             supabase.cur.execute(f"""
                 SELECT 
@@ -59,7 +62,7 @@ class AssistantRAG:
                 FROM {self.table_name}
                 ORDER BY embedding <=> %s::vector
                 LIMIT %s
-            """, (embedding, embedding, limit))
+            """, (embedding_str, embedding_str, limit))
             
             # Debug: print similarities
             results = supabase.cur.fetchall()
