@@ -145,13 +145,26 @@ Login to your admin dashboard to view all leads and conversation history.
         if session_id and session_id in self.conversation_memory:
             conversation_history = self.conversation_memory[session_id][-6:]  # Last 3 exchanges
         
+        # Check for conversation ending phrases
+        ending_phrases = ['no', 'nope', 'no thanks', 'that\'s all', 'i\'m good', 'goodbye', 'bye', 'thanks']
+        if query.lower().strip() in ending_phrases:
+            return {
+                "success": True,
+                "response": "Great! If you have any other questions in the future, feel free to come back. Have a wonderful day! 😊",
+                "sources_found": False
+            }
+        
         # Build messages for GPT
         system_prompt = """You are a helpful assistant for Streamline Automation, a company that builds custom AI agents and automation solutions.
 
-Use the provided context to answer user questions accurately. If the context doesn't contain the answer, politely say:
+Use the provided context to answer user questions accurately. Pay special attention to pricing information in the context.
+
+If the context doesn't contain the answer, politely say:
 "I don't have that information right now. For specific questions, please email support@streamlineautomation.co and our team will assist you."
 
 Be friendly, professional, and concise. Focus on helping potential clients understand what Streamline Automation does and how it can help them.
+
+Important: If the user asks about pricing and the context contains pricing information, make sure to explain it clearly.
 
 Context:
 {context}"""
