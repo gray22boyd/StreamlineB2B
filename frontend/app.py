@@ -3,9 +3,14 @@ import psycopg2
 import psycopg2.extras
 import bcrypt
 import os
+import sys
 from dotenv import load_dotenv
 from pathlib import Path
 from authlib.integrations.flask_client import OAuth
+
+# Add parent directory to path so we can import utils
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from agent_registry import build_registry
 from utils.assistant_rag import AssistantRAG
 
