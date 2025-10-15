@@ -44,6 +44,31 @@ class MarketingAgentAdapter(AgentAdapter):
         return self._call_tool_fn(name, arguments)
 
 
+class AnalyticsAgentAdapter(AgentAdapter):
+    """Adapter for the analytics agent with natural language database querying."""
+
+    def __init__(self) -> None:
+        # Import locally to avoid side effects during Flask import time
+        from agents.analytics_agent.mcp_server import call_analytics_tool
+        from agents.analytics_agent.schemas import MCP_TOOL_SCHEMAS, TOOL_DESCRIPTIONS
+        self._call_tool_fn: Callable[[str, Dict[str, Any]], Dict[str, Any]] = call_analytics_tool
+        self._schemas = MCP_TOOL_SCHEMAS
+        self._descriptions = TOOL_DESCRIPTIONS
+
+    def list_tools(self) -> list[Dict[str, Any]]:
+        tools: list[Dict[str, Any]] = []
+        for tool_name, input_schema in self._schemas.items():
+            tools.append({
+                "name": tool_name,
+                "description": self._descriptions.get(tool_name, ""),
+                "inputSchema": input_schema,
+            })
+        return tools
+
+    def call_tool(self, name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        return self._call_tool_fn(name, arguments)
+
+
 # Public registry mapping agent identifier -> adapter factory
 def build_registry() -> Dict[str, AgentAdapter]:
     # Prefer remote MCP HTTP adapter when configured
@@ -84,6 +109,7 @@ def build_registry() -> Dict[str, AgentAdapter]:
     # Fallback to in-process adapter
     return {
         "marketing": MarketingAgentAdapter(),
+        "analytics": AnalyticsAgentAdapter(),
         # Future agents can be added here without changing existing routes
         # e.g., "customer_service": CustomerServiceAgentAdapter(),
     }

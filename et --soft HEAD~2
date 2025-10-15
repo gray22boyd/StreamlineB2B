@@ -1,0 +1,5 @@
+[33m2d36f6c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/mcp-http[m[33m)[m Remove .env from git tracking
+[33mded88d0[m Add AI assistant widget
+[33mb811501[m[33m ([m[1;31morigin/lh[m[33m, [m[1;31morigin/feature/mcp-http[m[33m, [m[1;32mmaster[m[33m)[m Merge branch 'master' of https://github.com/gray22boyd/StreamlineB2B
+[33m1014197[m Refactor Supabase client to enhance table management and retrieval functions, update PDF chunker to process and embed text, and improve test scripts for database interactions and table creation.
+[33m7b4bc7c[m Merge remote-tracking branch 'origin/master'

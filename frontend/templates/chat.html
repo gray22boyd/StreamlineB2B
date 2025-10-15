@@ -60,7 +60,7 @@
                 <h5 class="mb-0" id="current-agent">
                     <i class="fas fa-bullhorn me-2"></i>Marketing Agent
                 </h5>
-                <small class="text-muted">Ready to help with your Facebook marketing</small>
+                <small class="text-muted" id="agent-description">Ready to help with your Facebook marketing</small>
             </div>
 
             <!-- Chat messages -->
@@ -217,9 +217,17 @@ function addMessage(content, sender) {
 
     const now = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
+    // Get current agent name
+    const agentNames = {
+        'marketing': 'Marketing Agent',
+        'analytics': 'Analytics Agent',
+        'content': 'Content Agent'
+    };
+    const agentName = agentNames[currentAgent] || 'Agent';
+
     messageDiv.innerHTML = `
         <div class="message-content">
-            ${sender === 'assistant' ? '<strong>Marketing Agent:</strong> ' : ''}${content}
+            ${sender === 'assistant' ? '<strong>' + agentName + ':</strong> ' : ''}${content}
         </div>
         <div class="message-time">${now}</div>
     `;
@@ -241,11 +249,28 @@ document.querySelectorAll('.agent-item').forEach(item => {
         // Update header
         document.getElementById('current-agent').innerHTML = this.innerHTML;
 
+        // Update description
+        const descriptions = {
+            'marketing': 'Ready to help with your Facebook marketing',
+            'analytics': 'Natural language database queries and business insights',
+            'content': 'Content creation and management (coming soon)'
+        };
+        document.getElementById('agent-description').textContent = descriptions[currentAgent] || 'Ready to assist';
+
+        // Custom welcome messages for each agent
+        const welcomeMessages = {
+            'marketing': 'Hello! I\'m your marketing agent. I can help you manage your Facebook pages, create posts, and analyze your social media performance. Try /list_pages or /post_text to get started!',
+            'analytics': 'Hello! I\'m your analytics agent. I can answer questions about your business data using natural language. Try /stats for an overview, /top_products to see bestsellers, or just ask me anything like "What was our revenue last month?"',
+            'content': 'Hello! I\'m your content agent. I\'m currently in development. Stay tuned for more features!'
+        };
+
+        const welcomeMessage = welcomeMessages[currentAgent] || 'Hello! I\'m ready to assist you. What can I help you with?';
+
         // Clear chat and add welcome message
         document.getElementById('chat-messages').innerHTML = `
             <div class="message assistant-message">
                 <div class="message-content">
-                    <strong>${this.textContent.trim()}:</strong> Hello! I'm ready to assist you. What can I help you with?
+                    <strong>${this.textContent.trim()}:</strong> ${welcomeMessage}
                 </div>
                 <div class="message-time">Just now</div>
             </div>

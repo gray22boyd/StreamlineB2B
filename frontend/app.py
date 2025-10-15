@@ -462,35 +462,101 @@ def api_chat():
     try:
         lower = message.lower()
 
-        if lower.startswith('/list_pages'):
-            result = adapter.call_tool('list_pages', {"business_id": business_id})
-            if result.get('success'):
-                pages = result.get('pages', [])
-                if not pages:
-                    return jsonify({"text": "No pages found."})
-                lines = [f"- {p.get('name')} (ID: {p.get('id')})" for p in pages]
-                return jsonify({"text": "Pages:\n" + "\n".join(lines)})
-            return jsonify({"text": f"Error: {result.get('error') or 'unknown'}"})
+        # Marketing agent commands
+        if agent == 'marketing':
+            if lower.startswith('/list_pages'):
+                result = adapter.call_tool('list_pages', {"business_id": business_id})
+                if result.get('success'):
+                    pages = result.get('pages', [])
+                    if not pages:
+                        return jsonify({"text": "No pages found."})
+                    lines = [f"- {p.get('name')} (ID: {p.get('id')})" for p in pages]
+                    return jsonify({"text": "Pages:\n" + "\n".join(lines)})
+                return jsonify({"text": f"Error: {result.get('error') or 'unknown'}"})
 
-        if lower.startswith('/post_text '):
-            text_msg = message[len('/post_text '):].strip()
-            if not text_msg:
-                return jsonify({"text": "Usage: /post_text <message>"})
-            result = adapter.call_tool('post_text', {"business_id": business_id, "message": text_msg})
-            return jsonify({"text": result.get('message') or result.get('error') or 'Done'})
+            if lower.startswith('/post_text '):
+                text_msg = message[len('/post_text '):].strip()
+                if not text_msg:
+                    return jsonify({"text": "Usage: /post_text <message>"})
+                result = adapter.call_tool('post_text', {"business_id": business_id, "message": text_msg})
+                return jsonify({"text": result.get('message') or result.get('error') or 'Done'})
 
-        if lower.startswith('/post_image '):
-            payload = message[len('/post_image '):]
-            if '|' not in payload:
-                return jsonify({"text": "Usage: /post_image <image_url> | <caption>"})
-            image_url, caption = [x.strip() for x in payload.split('|', 1)]
-            if not image_url or not caption:
-                return jsonify({"text": "Usage: /post_image <image_url> | <caption>"})
-            result = adapter.call_tool('post_image', {"business_id": business_id, "caption": caption, "image_url": image_url})
-            return jsonify({"text": result.get('message') or result.get('error') or 'Done'})
+            if lower.startswith('/post_image '):
+                payload = message[len('/post_image '):]
+                if '|' not in payload:
+                    return jsonify({"text": "Usage: /post_image <image_url> | <caption>"})
+                image_url, caption = [x.strip() for x in payload.split('|', 1)]
+                if not image_url or not caption:
+                    return jsonify({"text": "Usage: /post_image <image_url> | <caption>"})
+                result = adapter.call_tool('post_image', {"business_id": business_id, "caption": caption, "image_url": image_url})
+                return jsonify({"text": result.get('message') or result.get('error') or 'Done'})
 
-        # Help
-        return jsonify({"text": "Commands:\n- /list_pages\n- /post_text <message>\n- /post_image <image_url> | <caption>"})
+            # Marketing help
+            return jsonify({"text": "Marketing Commands:\n- /list_pages\n- /post_text <message>\n- /post_image <image_url> | <caption>"})
+
+        # Analytics agent commands
+        elif agent == 'analytics':
+            if lower.startswith('/stats'):
+                result = adapter.call_tool('get_quick_stats', {})
+                if result.get('success'):
+                    stats = result.get('stats', {})
+                    lines = [f"📊 **Business Overview**"]
+                    lines.append(f"- Total Customers: {stats.get('total_customers', 'N/A')}")
+                    lines.append(f"- Total Products: {stats.get('total_products', 'N/A')}")
+                    lines.append(f"- Total Orders: {stats.get('total_orders', 'N/A')}")
+                    lines.append(f"- Completed Orders: {stats.get('completed_orders', 'N/A')}")
+                    lines.append(f"- Total Revenue: ${stats.get('total_revenue', 0):,.2f}")
+                    lines.append(f"- Average Order Value: ${stats.get('average_order_value', 0):,.2f}")
+                    lines.append(f"- Last Order: {stats.get('last_order_date', 'N/A')}")
+                    return jsonify({"text": "\n".join(lines)})
+                return jsonify({"text": f"Error: {result.get('error') or 'unknown'}"})
+
+            if lower.startswith('/top_products'):
+                parts = message.split()
+                limit = 10
+                if len(parts) > 1 and parts[1].isdigit():
+                    limit = min(int(parts[1]), 50)
+                result = adapter.call_tool('get_top_products', {"limit": limit})
+                if result.get('success'):
+                    products = result.get('top_products', [])
+                    lines = [f"🏆 **Top {len(products)} Products**"]
+                    for i, p in enumerate(products, 1):
+                        lines.append(f"{i}. {p.get('product_name', 'Unknown')} - ${p.get('total_revenue', 0):,.2f}")
+                        lines.append(f"   Category: {p.get('category', 'N/A')} | Units: {p.get('total_units_sold', 0)}")
+                    return jsonify({"text": "\n".join(lines)})
+                return jsonify({"text": f"Error: {result.get('error') or 'unknown'}"})
+
+            if lower.startswith('/customers'):
+                result = adapter.call_tool('get_customer_insights', {})
+                if result.get('success'):
+                    insights = result.get('customer_insights', [])
+                    lines = ["👥 **Customer Insights by Tier**"]
+                    for insight in insights:
+                        tier = insight.get('loyalty_tier', 'Unknown')
+                        lines.append(f"\n{tier}:")
+                        lines.append(f"  - Customers: {insight.get('customer_count', 0)}")
+                        lines.append(f"  - Avg Order Value: ${insight.get('avg_order_value', 0):,.2f}")
+                        lines.append(f"  - Total Revenue: ${insight.get('total_revenue', 0):,.2f}")
+                    return jsonify({"text": "\n".join(lines)})
+                return jsonify({"text": f"Error: {result.get('error') or 'unknown'}"})
+
+            # Natural language query
+            if not lower.startswith('/'):
+                result = adapter.call_tool('query_database', {"question": message})
+                if result.get('success'):
+                    answer = result.get('answer', 'No answer available.')
+                    sql_query = result.get('sql_query', '')
+                    response = f"📊 **Answer:**\n{answer}"
+                    if sql_query:
+                        response += f"\n\n🔍 SQL Query:\n```sql\n{sql_query}\n```"
+                    return jsonify({"text": response})
+                return jsonify({"text": f"Error: {result.get('error') or 'unknown'}"})
+
+            # Analytics help
+            return jsonify({"text": "Analytics Commands:\n- /stats - Business overview\n- /top_products [limit] - Top products\n- /customers - Customer insights\n- Or ask any question about your data!"})
+
+        # General help
+        return jsonify({"text": "Please select an agent (marketing or analytics) and try your command again."})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
