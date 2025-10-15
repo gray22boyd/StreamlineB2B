@@ -168,7 +168,7 @@ Return just the SQL query without any formatting or explanation."""
         try:
             data_sample = json.dumps(results[:10], indent=2, default=str)  # Limit to first 10 rows
             
-            summary_prompt = f"""Based on this query result, provide a clear, natural language summary.
+            summary_prompt = f"""Based on this query result, provide a clear, concise answer in 1-2 sentences.
 
 Original question: {question}
 
@@ -177,12 +177,7 @@ Query results (showing first 10 rows):
 
 Total rows returned: {len(results)}
 
-Provide:
-1. A brief answer to the question
-2. Key insights from the data
-3. Any notable patterns or trends
-
-Keep the response concise and business-focused."""
+Provide a direct, simple answer to the question. Be conversational and focus only on the key information. Do not use markdown formatting, bullet points, or numbered lists. Just answer the question naturally."""
 
             response = self.llm.chat.completions.create(
                 model="gpt-4o-mini",
@@ -194,10 +189,6 @@ Keep the response concise and business-focused."""
             )
             
             summary = response.choices[0].message.content.strip()
-            
-            # Append raw data if results are small
-            if len(results) <= 20:
-                summary += f"\n\n**Detailed Data:**\n```json\n{json.dumps(results, indent=2, default=str)}\n```"
             
             return summary
             

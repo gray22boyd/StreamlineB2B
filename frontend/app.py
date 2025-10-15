@@ -545,11 +545,33 @@ def api_chat():
                 result = adapter.call_tool('query_database', {"question": message})
                 if result.get('success'):
                     answer = result.get('answer', 'No answer available.')
-                    sql_query = result.get('sql_query', '')
-                    response = f"📊 **Answer:**\n{answer}"
-                    if sql_query:
-                        response += f"\n\n🔍 SQL Query:\n```sql\n{sql_query}\n```"
-                    return jsonify({"text": response})
+                    # Clean up the answer - remove markdown artifacts and extra formatting
+                    import re
+                    
+                    # Extract just the brief answer if it's formatted with sections
+                    if '**Brief Answer**:' in answer or '1. **Brief Answer**' in answer:
+                        # Try to extract just the main answer
+                        brief_match = re.search(r'\*\*Brief Answer\*\*:?\s*(.+?)(?:\n\n|\n\d\.|\*\*|$)', answer, re.DOTALL)
+                        if brief_match:
+                            answer = brief_match.group(1).strip()
+                    
+                    # Remove markdown bold/italic
+                    answer = re.sub(r'\*\*([^\*]+)\*\*', r'\1', answer)
+                    answer = re.sub(r'\*([^\*]+)\*', r'\1', answer)
+                    
+                    # Remove numbered list markers at start
+                    answer = re.sub(r'^\d+\.\s*', '', answer)
+                    
+                    # Clean up json code blocks
+                    answer = re.sub(r'```json.*?```', '', answer, flags=re.DOTALL)
+                    
+                    # Remove "Detailed Data:" sections
+                    answer = re.sub(r'Detailed Data:.*$', '', answer, flags=re.DOTALL)
+                    
+                    # Clean up extra whitespace
+                    answer = ' '.join(answer.split())
+                    
+                    return jsonify({"text": answer.strip()})
                 return jsonify({"text": f"Error: {result.get('error') or 'unknown'}"})
 
             # Analytics help
