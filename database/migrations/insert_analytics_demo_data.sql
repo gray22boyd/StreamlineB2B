@@ -149,3 +149,4 @@ INSERT INTO public.analytics_demo_inventory (product_id, quantity_on_hand, reord
 -- This file continues with orders in the next part due to size...
 -- Generate 300+ orders across 6 months (May 2024 - October 2024)
 
+

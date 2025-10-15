@@ -403,3 +403,5 @@ def create_analytics_tools(business_id=None):
     """Factory function to create analytics tools for a specific business"""
     return AnalyticsTools(business_id)
 
+
+

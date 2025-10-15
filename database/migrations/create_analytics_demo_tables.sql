@@ -85,3 +85,4 @@ COMMENT ON TABLE public.analytics_demo_orders IS 'Demo order transactions for an
 COMMENT ON TABLE public.analytics_demo_order_items IS 'Demo order line items for analytics agent';
 COMMENT ON TABLE public.analytics_demo_inventory IS 'Demo inventory levels for analytics agent';
 
+

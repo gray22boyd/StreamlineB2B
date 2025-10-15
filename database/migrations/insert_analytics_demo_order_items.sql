@@ -101,3 +101,5 @@ INSERT INTO public.analytics_demo_order_items (order_id, product_id, quantity, u
 -- Continue for remaining orders...
 -- In production, you would generate items for all 300+ orders
 
+
+
