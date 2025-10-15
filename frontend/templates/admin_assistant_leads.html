@@ -1,70 +1,438 @@
 {% extends "base.html" %}
 
-{% block title %}Assistant Leads - Admin{% endblock %}
+{% block title %}Leads - Admin Dashboard{% endblock %}
 
-{% block content %}
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2>Assistant Leads</h2>
-            <p class="text-muted">Visitors who interacted with the assistant</p>
-        </div>
-        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
-        </a>
-    </div>
-
-    {% if leads %}
-    <div class="table-responsive">
-        <table class="table table-striped table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th>Date</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Initial Query</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for lead in leads %}
-                <tr>
-                    <td>{{ lead.created_at.strftime('%Y-%m-%d %H:%M') if lead.created_at else 'N/A' }}</td>
-                    <td>{{ lead.name }}</td>
-                    <td><a href="mailto:{{ lead.email }}">{{ lead.email }}</a></td>
-                    <td>
-                        {% if lead.initial_query %}
-                            {{ lead.initial_query[:50] }}{% if lead.initial_query|length > 50 %}...{% endif %}
-                        {% else %}
-                            <span class="text-muted">N/A</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if lead.contacted %}
-                            <span class="badge bg-success">Contacted</span>
-                        {% else %}
-                            <span class="badge bg-warning text-dark">New</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-    <div class="alert alert-info">
-        <i class="fas fa-info-circle me-2"></i>No leads captured yet.
-    </div>
-    {% endif %}
-</div>
-
+{% block extra_css %}
 <style>
-.table-responsive {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    padding: 20px;
-}
+    body {
+        background: #f8fafc;
+    }
+
+    .admin-container {
+        display: flex;
+        min-height: calc(100vh - 65px);
+    }
+
+    /* Admin Sidebar */
+    .admin-sidebar {
+        width: 260px;
+        background: #0f172a;
+        color: white;
+        padding: 2rem 0;
+    }
+
+    .admin-sidebar-header {
+        padding: 0 1.5rem 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .admin-sidebar-header h5 {
+        font-size: 1.125rem;
+        font-weight: 700;
+        margin: 0 0 0.25rem 0;
+    }
+
+    .admin-sidebar-header .admin-name {
+        font-size: 0.875rem;
+        color: #94a3b8;
+    }
+
+    .admin-nav {
+        padding: 1.5rem 0;
+    }
+
+    .admin-nav-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1.5rem;
+        color: #cbd5e1;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border-left: 3px solid transparent;
+    }
+
+    .admin-nav-item:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+    }
+
+    .admin-nav-item.active {
+        background: rgba(102, 126, 234, 0.1);
+        color: white;
+        border-left-color: #667eea;
+    }
+
+    .admin-nav-icon {
+        width: 20px;
+        text-align: center;
+    }
+
+    .admin-logout {
+        padding: 1.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Main Content */
+    .admin-main {
+        flex: 1;
+        padding: 2.5rem;
+        overflow-y: auto;
+    }
+
+    .admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .admin-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0;
+    }
+
+    .stats-bar {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-chip {
+        padding: 0.75rem 1.5rem;
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .stat-chip-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.125rem;
+    }
+
+    .stat-chip-icon.new {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .stat-chip-icon.contacted {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .stat-chip-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .stat-chip-label {
+        font-size: 0.875rem;
+        color: #64748b;
+    }
+
+    /* Card */
+    .card-modern {
+        background: white;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+    }
+
+    .card-header-modern {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .card-header-modern h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin: 0;
+    }
+
+    /* Lead Card */
+    .lead-card {
+        padding: 1.5rem;
+        border-bottom: 1px solid #f1f5f9;
+        transition: background 0.2s ease;
+    }
+
+    .lead-card:hover {
+        background: #f8fafc;
+    }
+
+    .lead-card:last-child {
+        border-bottom: none;
+    }
+
+    .lead-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 1rem;
+    }
+
+    .lead-info h4 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin: 0 0 0.25rem 0;
+    }
+
+    .lead-contact {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.875rem;
+        color: #64748b;
+    }
+
+    .lead-contact a {
+        color: #667eea;
+        text-decoration: none;
+    }
+
+    .lead-contact a:hover {
+        text-decoration: underline;
+    }
+
+    .lead-badges {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .badge-modern {
+        padding: 0.375rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .badge-new {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .badge-contacted {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .badge-source {
+        background: #e0e7ff;
+        color: #3730a3;
+    }
+
+    .lead-details {
+        margin-top: 1rem;
+    }
+
+    .detail-row {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 1rem;
+        margin-bottom: 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .detail-label {
+        font-weight: 600;
+        color: #64748b;
+    }
+
+    .detail-value {
+        color: #1e293b;
+    }
+
+    .lead-date {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        margin-top: 0.5rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: #cbd5e1;
+        margin-bottom: 1.5rem;
+    }
+
+    .empty-state h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+        color: #64748b;
+    }
 </style>
 {% endblock %}
 
+{% block content %}
+<div class="admin-container">
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="admin-sidebar-header">
+            <h5>🛠️ Admin Panel</h5>
+            <div class="admin-name">{{ user.name }}</div>
+        </div>
+
+        <nav class="admin-nav">
+            <a href="{{ url_for('admin_dashboard') }}" class="admin-nav-item">
+                <i class="fas fa-chart-line admin-nav-icon"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('admin_businesses') }}" class="admin-nav-item">
+                <i class="fas fa-building admin-nav-icon"></i>
+                <span>Businesses</span>
+            </a>
+            <a href="{{ url_for('admin_users') }}" class="admin-nav-item">
+                <i class="fas fa-users admin-nav-icon"></i>
+                <span>Users</span>
+            </a>
+            <a href="{{ url_for('admin_assistant_leads') }}" class="admin-nav-item active">
+                <i class="fas fa-user-plus admin-nav-icon"></i>
+                <span>Leads</span>
+            </a>
+            <a href="{{ url_for('chat') }}" class="admin-nav-item">
+                <i class="fas fa-comments admin-nav-icon"></i>
+                <span>Agent Chat</span>
+            </a>
+        </nav>
+
+        <div class="admin-logout">
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-light w-100">
+                <i class="fas fa-sign-out-alt me-2"></i>Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <div class="admin-header">
+            <h1>Leads Dashboard</h1>
+        </div>
+
+        {% if leads %}
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-chip">
+                <div class="stat-chip-icon new">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <div>
+                    <div class="stat-chip-value">{{ leads | selectattr('contacted', 'equalto', false) | list | length }}</div>
+                    <div class="stat-chip-label">New Leads</div>
+                </div>
+            </div>
+
+            <div class="stat-chip">
+                <div class="stat-chip-icon contacted">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div>
+                    <div class="stat-chip-value">{{ leads | selectattr('contacted', 'equalto', true) | list | length }}</div>
+                    <div class="stat-chip-label">Contacted</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leads List -->
+        <div class="card-modern">
+            <div class="card-header-modern">
+                <h5>📋 All Leads</h5>
+                <span style="color: #64748b; font-size: 0.875rem;">{{ leads | length }} total</span>
+            </div>
+
+            {% for lead in leads %}
+            <div class="lead-card">
+                <div class="lead-header">
+                    <div class="lead-info">
+                        <h4>{{ lead.name }}</h4>
+                        <div class="lead-contact">
+                            <span><i class="fas fa-envelope me-1"></i><a href="mailto:{{ lead.email }}">{{ lead.email }}</a></span>
+                            {% if lead.phone %}
+                                <span><i class="fas fa-phone me-1"></i><a href="tel:{{ lead.phone }}">{{ lead.phone }}</a></span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="lead-badges">
+                        {% if lead.lead_source %}
+                            <span class="badge-modern badge-source">{{ lead.lead_source }}</span>
+                        {% endif %}
+                        {% if lead.contacted %}
+                            <span class="badge-modern badge-contacted">Contacted</span>
+                        {% else %}
+                            <span class="badge-modern badge-new">New</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="lead-details">
+                    {% if lead.business_name %}
+                    <div class="detail-row">
+                        <div class="detail-label">Business:</div>
+                        <div class="detail-value">{{ lead.business_name }}</div>
+                    </div>
+                    {% endif %}
+
+                    {% if lead.pain_points %}
+                    <div class="detail-row">
+                        <div class="detail-label">Pain Points:</div>
+                        <div class="detail-value">{{ lead.pain_points }}</div>
+                    </div>
+                    {% endif %}
+
+                    {% if lead.initial_query %}
+                    <div class="detail-row">
+                        <div class="detail-label">Initial Query:</div>
+                        <div class="detail-value">{{ lead.initial_query[:100] }}{% if lead.initial_query|length > 100 %}...{% endif %}</div>
+                    </div>
+                    {% endif %}
+
+                    {% if lead.notes %}
+                    <div class="detail-row">
+                        <div class="detail-label">Notes:</div>
+                        <div class="detail-value">{{ lead.notes }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="lead-date">
+                    <i class="fas fa-clock me-1"></i>{{ lead.created_at.strftime('%B %d, %Y at %I:%M %p') if lead.created_at else 'N/A' }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="card-modern">
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <h3>No Leads Yet</h3>
+                <p>Leads from the request access form will appear here</p>
+            </div>
+        </div>
+        {% endif %}
+    </main>
+</div>
+{% endblock %}

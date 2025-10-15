@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Login - Streamline Automation{% endblock %}
+{% block title %}Request Access - Streamline Automation{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -17,37 +17,31 @@
         display: none;
     }
 
-    .login-container {
+    .request-container {
         width: 100%;
-        max-width: 440px;
+        max-width: 540px;
         padding: 2rem;
         animation: fadeInUp 0.6s ease-out;
     }
 
     @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
-    .login-card {
+    .request-card {
         background: white;
         border-radius: 20px;
         padding: 3rem;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     }
 
-    .login-header {
+    .request-header {
         text-align: center;
-        margin-bottom: 2.5rem;
+        margin-bottom: 2rem;
     }
 
-    .login-logo {
+    .request-logo {
         width: 64px;
         height: 64px;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -60,21 +54,22 @@
         color: white;
     }
 
-    .login-header h1 {
+    .request-header h1 {
         font-size: 1.75rem;
         font-weight: 700;
         color: #0f172a;
         margin: 0 0 0.5rem 0;
     }
 
-    .login-header p {
+    .request-header p {
         color: #64748b;
         margin: 0;
         font-size: 0.9375rem;
+        line-height: 1.6;
     }
 
     .form-group {
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.25rem;
     }
 
     .form-label {
@@ -83,6 +78,11 @@
         color: #334155;
         margin-bottom: 0.5rem;
         font-size: 0.875rem;
+    }
+
+    .form-label .required {
+        color: #ef4444;
+        margin-left: 0.25rem;
     }
 
     .form-control-modern {
@@ -102,7 +102,13 @@
         background: white;
     }
 
-    .btn-login {
+    textarea.form-control-modern {
+        min-height: 100px;
+        resize: vertical;
+        font-family: inherit;
+    }
+
+    .btn-submit {
         width: 100%;
         padding: 0.875rem;
         border: none;
@@ -116,91 +122,30 @@
         margin-top: 0.5rem;
     }
 
-    .btn-login:hover {
+    .btn-submit:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
     }
 
-    .btn-login:active {
+    .btn-submit:active {
         transform: translateY(0);
     }
 
-    .divider {
-        display: flex;
-        align-items: center;
+    .back-to-login {
         text-align: center;
-        margin: 1.5rem 0;
-    }
-
-    .divider::before,
-    .divider::after {
-        content: '';
-        flex: 1;
-        border-bottom: 1px solid #e2e8f0;
-    }
-
-    .divider span {
-        padding: 0 1rem;
-        color: #94a3b8;
-        font-size: 0.875rem;
-        font-weight: 500;
-    }
-
-    .btn-facebook {
-        width: 100%;
-        padding: 0.875rem;
-        border: 1px solid #e2e8f0;
-        border-radius: 10px;
-        font-weight: 600;
-        font-size: 0.9375rem;
-        background: white;
-        color: #334155;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        text-decoration: none;
-    }
-
-    .btn-facebook:hover {
-        background: #f8fafc;
-        border-color: #cbd5e1;
-    }
-
-    .btn-facebook i {
-        color: #1877f2;
-        font-size: 1.25rem;
-    }
-
-    .alert-modern {
-        padding: 0.875rem 1rem;
-        border-radius: 10px;
-        margin-bottom: 1.5rem;
-        font-size: 0.875rem;
-    }
-
-    .alert-error {
-        background: #fee2e2;
-        color: #991b1b;
-        border: 1px solid #fecaca;
-    }
-
-    .login-footer {
-        text-align: center;
-        margin-top: 2rem;
-        padding-top: 2rem;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
         border-top: 1px solid #e2e8f0;
     }
 
-    .login-footer a {
+    .back-to-login a {
         color: #667eea;
         text-decoration: none;
         font-weight: 500;
+        font-size: 0.9375rem;
     }
 
-    .login-footer a:hover {
+    .back-to-login a:hover {
         text-decoration: underline;
     }
 
@@ -228,7 +173,7 @@
     }
 
     @media (max-width: 768px) {
-        .login-card {
+        .request-card {
             padding: 2rem;
         }
 
@@ -247,74 +192,101 @@
     <span>Back to Home</span>
 </a>
 
-<div class="login-container">
-    <div class="login-card">
-        <div class="login-header">
-            <div class="login-logo">
+<div class="request-container">
+    <div class="request-card">
+        <div class="request-header">
+            <div class="request-logo">
                 <i class="fas fa-bolt"></i>
             </div>
-            <h1>Welcome Back</h1>
-            <p>Sign in to access your AI agents</p>
+            <h1>Request Access</h1>
+            <p>Tell us about your business and our team will get in touch with you shortly</p>
         </div>
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert-modern alert-error">
-                        <i class="fas fa-exclamation-circle me-2"></i>{{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        <form method="POST">
+        <form method="POST" action="{{ url_for('request_access') }}">
             <div class="form-group">
-                <label class="form-label" for="email">Email Address</label>
+                <label class="form-label" for="name">
+                    Full Name<span class="required">*</span>
+                </label>
                 <input 
-                    type="email" 
+                    type="text" 
                     class="form-control-modern" 
-                    id="email" 
-                    name="email" 
-                    placeholder="you@example.com"
+                    id="name" 
+                    name="name" 
+                    placeholder="John Doe"
                     required
                     autofocus
                 >
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="password">Password</label>
+                <label class="form-label" for="email">
+                    Email Address<span class="required">*</span>
+                </label>
                 <input 
-                    type="password" 
+                    type="email" 
                     class="form-control-modern" 
-                    id="password" 
-                    name="password" 
-                    placeholder="Enter your password"
+                    id="email" 
+                    name="email" 
+                    placeholder="john@company.com"
                     required
                 >
             </div>
 
-            <button type="submit" class="btn-login">
-                <i class="fas fa-sign-in-alt me-2"></i>Sign In
+            <div class="form-group">
+                <label class="form-label" for="phone">
+                    Phone Number
+                </label>
+                <input 
+                    type="tel" 
+                    class="form-control-modern" 
+                    id="phone" 
+                    name="phone" 
+                    placeholder="+1 (555) 123-4567"
+                >
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="business_name">
+                    Business/Company Name<span class="required">*</span>
+                </label>
+                <input 
+                    type="text" 
+                    class="form-control-modern" 
+                    id="business_name" 
+                    name="business_name" 
+                    placeholder="Acme Corporation"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="pain_points">
+                    What challenges are you facing?<span class="required">*</span>
+                </label>
+                <textarea 
+                    class="form-control-modern" 
+                    id="pain_points" 
+                    name="pain_points" 
+                    placeholder="Tell us about your business challenges, what you're looking to automate, or how we can help..."
+                    required
+                    rows="4"
+                ></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-paper-plane me-2"></i>Submit Request
             </button>
         </form>
 
-        <div class="divider">
-            <span>or continue with</span>
-        </div>
-
-        <a href="{{ url_for('login_facebook') }}" class="btn-facebook">
-            <i class="fab fa-facebook"></i>
-            <span>Continue with Facebook</span>
-        </a>
-
-        <div class="login-footer">
-            <p style="color: #64748b; font-size: 0.875rem; margin-bottom: 0.75rem;">
-                New to Streamline Automation?
+        <div class="back-to-login">
+            <p style="color: #64748b; font-size: 0.875rem; margin-bottom: 0.5rem;">
+                Already have an account?
             </p>
-            <a href="{{ url_for('request_access') }}" style="color: #667eea; text-decoration: none; font-weight: 600; font-size: 0.9375rem;">
-                <i class="fas fa-rocket me-1"></i>Request Access
+            <a href="{{ url_for('login') }}">
+                <i class="fas fa-sign-in-alt me-1"></i>Sign in here
             </a>
         </div>
     </div>
 </div>
 {% endblock %}
+

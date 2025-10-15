@@ -410,6 +410,57 @@ def assistant_lead():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
+# --------- Access Request / Lead Capture ----------
+@app.route('/request-access', methods=['GET', 'POST'])
+def request_access():
+    """Request access form for new customers"""
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        email = request.form.get('email', '').strip()
+        phone = request.form.get('phone', '').strip()
+        business_name = request.form.get('business_name', '').strip()
+        pain_points = request.form.get('pain_points', '').strip()
+        
+        # Validation
+        if not name or not email or not business_name or not pain_points:
+            flash('Please fill in all required fields', 'error')
+            return redirect(url_for('request_access'))
+        
+        if '@' not in email or '.' not in email:
+            flash('Please enter a valid email address', 'error')
+            return redirect(url_for('request_access'))
+        
+        try:
+            conn = get_db_connection()
+            cur = conn.cursor()
+            
+            # Save lead to database
+            cur.execute("""
+                INSERT INTO assistant_leads 
+                (name, email, phone, business_name, pain_points, lead_source, initial_query)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """, (name, email, phone, business_name, pain_points, 'signup_form', 
+                  f"Business: {business_name} - Pain Points: {pain_points}"))
+            
+            conn.commit()
+            cur.close()
+            conn.close()
+            
+            return redirect(url_for('request_success'))
+        
+        except Exception as e:
+            flash('An error occurred. Please try again.', 'error')
+            return redirect(url_for('request_access'))
+    
+    return render_template('request_access.html')
+
+
+@app.route('/request-success')
+def request_success():
+    """Thank you page after access request"""
+    return render_template('request_success.html')
+
+
 # Admin endpoint to view captured leads
 @app.route('/admin/assistant-leads')
 @admin_required
@@ -419,7 +470,8 @@ def admin_assistant_leads():
     cur = conn.cursor()
     
     cur.execute("""
-        SELECT id, name, email, initial_query, created_at, contacted, notes
+        SELECT id, name, email, phone, business_name, pain_points, 
+               lead_source, initial_query, created_at, contacted, notes
         FROM assistant_leads
         ORDER BY created_at DESC
         LIMIT 100
