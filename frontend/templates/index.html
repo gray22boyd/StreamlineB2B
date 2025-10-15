@@ -1,247 +1,367 @@
 {% extends "base.html" %}
 
-{% block title %}Streamline Automation - Automate. Innovate. Streamline.{% endblock %}
+{% block title %}Streamline Automation - AI-Powered Business Automation{% endblock %}
 
 {% block content %}
+<style>
+    /* Hero Section - Full Width Modern */
+    .hero-modern {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 8rem 0 6rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-modern::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .hero-modern h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+    }
+
+    .hero-modern .lead {
+        font-size: 1.25rem;
+        margin-bottom: 2.5rem;
+        opacity: 0.95;
+        font-weight: 400;
+        line-height: 1.7;
+    }
+
+    .hero-modern .btn {
+        padding: 1rem 2.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 12px;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .hero-modern .btn-light {
+        background: white;
+        color: #667eea;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .hero-modern .btn-light:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2);
+        background: white;
+        color: #667eea;
+    }
+
+    /* Features Section - Modern Cards */
+    .features-modern {
+        padding: 6rem 0;
+        background: #f8fafc;
+    }
+
+    .section-header {
+        text-align: center;
+        max-width: 700px;
+        margin: 0 auto 4rem;
+    }
+
+    .section-header h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #0f172a;
+    }
+
+    .section-header p {
+        font-size: 1.125rem;
+        color: #64748b;
+    }
+
+    .feature-card-modern {
+        background: white;
+        border-radius: 16px;
+        padding: 2.5rem;
+        height: 100%;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .feature-card-modern:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        border-color: #667eea;
+    }
+
+    .feature-icon-modern {
+        width: 64px;
+        height: 64px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .feature-icon-modern i {
+        font-size: 1.75rem;
+        color: white;
+    }
+
+    .feature-card-modern h3 {
+        font-size: 1.375rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #0f172a;
+    }
+
+    .feature-card-modern p {
+        color: #64748b;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    /* Stats Section */
+    .stats-section {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: white;
+        padding: 5rem 0;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 2rem 1rem;
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 800;
+        display: block;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-label {
+        font-size: 1.125rem;
+        color: #cbd5e1;
+        font-weight: 500;
+    }
+
+    /* CTA Section */
+    .cta-modern {
+        padding: 6rem 0;
+        background: white;
+        text-align: center;
+    }
+
+    .cta-modern h2 {
+        font-size: 2.75rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: #0f172a;
+    }
+
+    .cta-modern p {
+        font-size: 1.25rem;
+        color: #64748b;
+        margin-bottom: 2.5rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .cta-modern .btn {
+        padding: 1rem 3rem;
+        font-size: 1.125rem;
+        font-weight: 600;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
+    }
+
+    .cta-modern .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 30px rgba(102, 126, 234, 0.5);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .hero-modern {
+            padding: 4rem 0 3rem;
+        }
+
+        .hero-modern h1 {
+            font-size: 2.5rem;
+        }
+
+        .hero-modern .lead {
+            font-size: 1.1rem;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+        }
+
+        .features-modern {
+            padding: 4rem 0;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+        }
+
+        .cta-modern h2 {
+            font-size: 2rem;
+        }
+    }
+</style>
+
 <!-- Hero Section -->
-<div class="hero-section">
+<section class="hero-modern">
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-10 text-center">
-                <h1 class="hero-title">Streamline Automation</h1>
-                <p class="hero-subtitle">Automate. Innovate. Streamline.</p>
-                <p class="hero-description">
-                    Transform your business operations with AI-powered automation solutions designed for modern enterprises.
-                </p>
-                
-                <div class="hero-buttons mt-5">
-                    <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">
-                        <i class="fas fa-sign-in-alt me-2"></i>Access Platform
-                    </a>
-                </div>
-            </div>
+        <div class="hero-content animate-fade-in">
+            <h1>Transform Your Business with AI Automation</h1>
+            <p class="lead">
+                Powerful AI agents that handle marketing, analytics, and customer engagement—so you can focus on growth.
+            </p>
+            <a href="{{ url_for('login') }}" class="btn btn-light btn-lg">
+                <i class="fas fa-rocket me-2"></i>Get Started
+            </a>
         </div>
     </div>
-</div>
+</section>
 
 <!-- Features Section -->
-<div class="features-section">
+<section class="features-modern">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-12 text-center mb-5">
-                <h2 class="section-title">Powerful Automation Tools</h2>
-                <p class="section-subtitle">Everything you need to streamline your business operations</p>
-            </div>
+        <div class="section-header">
+            <h2>Everything You Need to Succeed</h2>
+            <p>Powerful automation tools designed for modern businesses</p>
         </div>
-        
-        <div class="row">
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="feature-card">
-                    <div class="feature-icon">
+
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card-modern">
+                    <div class="feature-icon-modern">
                         <i class="fas fa-robot"></i>
                     </div>
-                    <h4>AI-Powered Agents</h4>
-                    <p>Intelligent automation agents that handle customer service, marketing, and analytics with advanced AI capabilities.</p>
+                    <h3>AI-Powered Agents</h3>
+                    <p>Intelligent agents that automate marketing, analytics, and content creation with advanced natural language processing.</p>
                 </div>
             </div>
-            
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="feature-card">
-                    <div class="feature-icon">
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card-modern">
+                    <div class="feature-icon-modern">
                         <i class="fas fa-chart-line"></i>
                     </div>
-                    <h4>Advanced Analytics</h4>
-                    <p>Real-time insights and performance metrics to help you make data-driven decisions for your business.</p>
+                    <h3>Real-Time Analytics</h3>
+                    <p>Query your business data in natural language and get instant insights with AI-generated visualizations.</p>
                 </div>
             </div>
-            
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-cogs"></i>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card-modern">
+                    <div class="feature-icon-modern">
+                        <i class="fas fa-bolt"></i>
                     </div>
-                    <h4>Seamless Integration</h4>
-                    <p>Connect with your existing tools and platforms for a unified, streamlined workflow experience.</p>
+                    <h3>Lightning Fast</h3>
+                    <p>Built on cutting-edge technology for instant responses and seamless performance at scale.</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card-modern">
+                    <div class="feature-icon-modern">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Enterprise Security</h3>
+                    <p>Bank-level security with encryption, compliance, and role-based access control built-in.</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card-modern">
+                    <div class="feature-icon-modern">
+                        <i class="fas fa-plug"></i>
+                    </div>
+                    <h3>Seamless Integration</h3>
+                    <p>Connect with your existing tools through our robust API and pre-built integrations.</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card-modern">
+                    <div class="feature-icon-modern">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>24/7 Support</h3>
+                    <p>Our team is always here to help you succeed with dedicated support and comprehensive documentation.</p>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <span class="stat-number">99.9%</span>
+                    <span class="stat-label">Uptime</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <span class="stat-number">10x</span>
+                    <span class="stat-label">Faster Workflows</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">AI Assistance</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 <!-- CTA Section -->
-<div class="cta-section">
+<section class="cta-modern">
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 text-center">
-                <h2 class="cta-title">Ready to Transform Your Business?</h2>
-                <p class="cta-description">Join innovative companies already using Streamline Automation to boost efficiency and drive growth.</p>
-                <a href="{{ url_for('login') }}" class="btn btn-light btn-lg">
-                    <i class="fas fa-sign-in-alt me-2"></i>Login
-                </a>
-            </div>
-        </div>
+        <h2>Ready to Get Started?</h2>
+        <p>Join innovative businesses already using Streamline to automate and grow.</p>
+        <a href="{{ url_for('login') }}" class="btn btn-lg">
+            <i class="fas fa-sign-in-alt me-2"></i>Access Platform
+        </a>
     </div>
-</div>
-
-<style>
-/* Hero Section */
-.hero-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 100px 0;
-    margin-top: -20px;
-}
-
-.hero-title {
-    font-size: 4rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.hero-subtitle {
-    font-size: 1.5rem;
-    font-weight: 300;
-    margin-bottom: 2rem;
-    opacity: 0.9;
-    font-style: italic;
-}
-
-.hero-description {
-    font-size: 1.2rem;
-    opacity: 0.9;
-    max-width: 600px;
-    margin: 0 auto;
-    line-height: 1.6;
-}
-
-.hero-buttons .btn {
-    padding: 12px 30px;
-    font-size: 1.1rem;
-    border-radius: 50px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    transition: all 0.3s ease;
-}
-
-.hero-buttons .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-}
-
-/* Features Section */
-.features-section {
-    padding: 80px 0;
-    background: #f8f9fa;
-}
-
-.section-title {
-    font-size: 2.5rem;
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 1rem;
-}
-
-.section-subtitle {
-    font-size: 1.1rem;
-    color: #6c757d;
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-.feature-card {
-    background: white;
-    padding: 40px 30px;
-    border-radius: 15px;
-    text-align: center;
-    height: 100%;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    transition: all 0.3s ease;
-    border: none;
-}
-
-.feature-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-}
-
-.feature-icon {
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 25px;
-}
-
-.feature-icon i {
-    font-size: 2rem;
-    color: white;
-}
-
-.feature-card h4 {
-    font-size: 1.4rem;
-    font-weight: 600;
-    margin-bottom: 15px;
-    color: #2c3e50;
-}
-
-.feature-card p {
-    color: #6c757d;
-    line-height: 1.6;
-    margin-bottom: 0;
-}
-
-/* CTA Section */
-.cta-section {
-    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-    color: white;
-    padding: 80px 0;
-}
-
-.cta-title {
-    font-size: 2.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-}
-
-.cta-description {
-    font-size: 1.1rem;
-    opacity: 0.9;
-    margin-bottom: 2rem;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.cta-section .btn {
-    padding: 15px 40px;
-    font-size: 1.1rem;
-    border-radius: 50px;
-    font-weight: 500;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .hero-title {
-        font-size: 2.5rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1.2rem;
-    }
-    
-    .hero-description {
-        font-size: 1rem;
-    }
-    
-    .hero-buttons .btn {
-        display: block;
-        margin: 0 auto;
-        width: 100%;
-        max-width: 300px;
-    }
-}
-</style>
+</section>
 {% endblock %}

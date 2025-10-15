@@ -1,193 +1,527 @@
 {% extends "base.html" %}
 
-{% block title %}AI Agents - Streamline Automation Co{% endblock %}
+{% block title %}AI Agents{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Remove default padding/margins for full-screen layout */
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .modern-nav {
+        position: relative;
+    }
+
+    /* Full-Screen Chat Container */
+    .chat-app-container {
+        height: calc(100vh - 65px);
+        display: flex;
+        overflow: hidden;
+        background: #f8fafc;
+    }
+
+    /* Sidebar */
+    .chat-sidebar {
+        width: 280px;
+        background: white;
+        border-right: 1px solid #e2e8f0;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .sidebar-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .sidebar-header h5 {
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #64748b;
+        margin: 0 0 0.25rem 0;
+        letter-spacing: 0.05em;
+    }
+
+    .sidebar-header .user-name {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #0f172a;
+    }
+
+    .sidebar-agents {
+        flex: 1;
+        padding: 1rem;
+        overflow-y: auto;
+    }
+
+    .agent-item {
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border: 1px solid transparent;
+    }
+
+    .agent-item:hover {
+        background: #f8fafc;
+        border-color: #e2e8f0;
+    }
+
+    .agent-item.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-color: transparent;
+    }
+
+    .agent-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        background: #f1f5f9;
+    }
+
+    .agent-item.active .agent-icon {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .agent-info {
+        flex: 1;
+    }
+
+    .agent-name {
+        font-weight: 600;
+        font-size: 0.9375rem;
+        margin-bottom: 0.125rem;
+    }
+
+    .agent-desc {
+        font-size: 0.75rem;
+        opacity: 0.7;
+    }
+
+    .sidebar-footer {
+        padding: 1rem;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .sidebar-footer .btn {
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.875rem;
+    }
+
+    /* Main Chat Area */
+    .chat-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: white;
+        height: 100%;
+    }
+
+    .chat-header {
+        padding: 1.25rem 2rem;
+        border-bottom: 1px solid #e2e8f0;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .chat-header-left {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .chat-header-icon {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+    }
+
+    .chat-header-info h5 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin: 0 0 0.125rem 0;
+        color: #0f172a;
+    }
+
+    .chat-header-info p {
+        font-size: 0.875rem;
+        color: #64748b;
+        margin: 0;
+    }
+
+    .status-badge {
+        padding: 0.375rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: #dcfce7;
+        color: #166534;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+
+    .status-badge::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #22c55e;
+    }
+
+    /* Messages Area */
+    .chat-messages {
+        flex: 1;
+        padding: 2rem;
+        overflow-y: auto;
+        background: #f8fafc;
+    }
+
+    .message {
+        margin-bottom: 1.5rem;
+        display: flex;
+        gap: 0.75rem;
+        animation: fadeInUp 0.3s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .message-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    .assistant-message .message-avatar {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .user-message {
+        flex-direction: row-reverse;
+    }
+
+    .user-message .message-avatar {
+        background: #e2e8f0;
+        color: #475569;
+    }
+
+    .message-content-wrapper {
+        flex: 1;
+        max-width: 65%;
+    }
+
+    .message-content {
+        background: white;
+        padding: 1rem 1.25rem;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        color: #1e293b;
+        line-height: 1.6;
+        word-wrap: break-word;
+    }
+
+    .user-message .message-content {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .message-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.375rem;
+        font-size: 0.75rem;
+        color: #94a3b8;
+    }
+
+    .message-sender {
+        font-weight: 600;
+    }
+
+    /* Chat Input */
+    .chat-input-container {
+        padding: 1.5rem 2rem;
+        border-top: 1px solid #e2e8f0;
+        background: white;
+    }
+
+    .chat-input-wrapper {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+    }
+
+    .chat-input {
+        flex: 1;
+        padding: 0.875rem 1.25rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 0.9375rem;
+        transition: all 0.2s ease;
+        background: #f8fafc;
+    }
+
+    .chat-input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        background: white;
+    }
+
+    .chat-send-btn {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        border: none;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.125rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .chat-send-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .chat-send-btn:active {
+        transform: translateY(0);
+    }
+
+    /* Admin Badge */
+    .admin-badge {
+        padding: 0.375rem 0.75rem;
+        background: #fef3c7;
+        color: #92400e;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
+        display: inline-block;
+    }
+
+    .context-info {
+        font-size: 0.75rem;
+        color: #10b981;
+        margin-top: 0.25rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .chat-sidebar {
+            width: 70px;
+        }
+
+        .sidebar-header h5,
+        .sidebar-header .user-name,
+        .agent-info,
+        .sidebar-footer .btn span {
+            display: none;
+        }
+
+        .chat-header {
+            padding: 1rem;
+        }
+
+        .chat-messages {
+            padding: 1rem;
+        }
+
+        .message-content-wrapper {
+            max-width: 85%;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container-fluid h-100">
-    <div class="row h-100">
-        <!-- Sidebar with agents -->
-        <div class="col-md-3 col-lg-2 bg-light sidebar">
-            <div class="d-flex flex-column h-100">
-                <div class="p-3 border-bottom">
-                    <h5 class="mb-0">Your Agents</h5>
-                    <small class="text-muted">Welcome, {{ user.name if user else 'User' }}</small>
-                    {% if user.is_super_admin %}
-                        <div class="mt-2">
-                            <span class="badge bg-warning">🛠️ Admin Mode</span>
-                            {% if session.get('admin_business_context') %}
-                                <br><small class="text-success">Context: {{ session['admin_business_context']['business_name'] }}</small>
-                            {% else %}
-                                <br><small class="text-info">No business context selected</small>
-                            {% endif %}
-                        </div>
-                    {% endif %}
-                </div>
+<div class="chat-app-container">
+    <!-- Sidebar -->
+    <div class="chat-sidebar">
+        <div class="sidebar-header">
+            <h5>Your Agents</h5>
+            <div class="user-name">{{ user.name if user else 'User' }}</div>
+            {% if user.is_super_admin %}
+                <span class="admin-badge">🛠️ Admin</span>
+                {% if session.get('admin_business_context') %}
+                    <div class="context-info">✓ {{ session['admin_business_context']['business_name'] }}</div>
+                {% endif %}
+            {% endif %}
+        </div>
 
-                <div class="flex-grow-1 p-3">
-                    <div class="agent-list">
-                        <div class="agent-item active" data-agent="marketing">
-                            <i class="fas fa-bullhorn me-2"></i>
-                            Marketing Agent
-                        </div>
-                        <div class="agent-item" data-agent="analytics">
-                            <i class="fas fa-chart-bar me-2"></i>
-                            Analytics Agent
-                        </div>
-                        <div class="agent-item" data-agent="content">
-                            <i class="fas fa-edit me-2"></i>
-                            Content Agent
-                        </div>
-                    </div>
+        <div class="sidebar-agents">
+            <div class="agent-item active" data-agent="marketing">
+                <div class="agent-icon">
+                    <i class="fas fa-bullhorn"></i>
                 </div>
+                <div class="agent-info">
+                    <div class="agent-name">Marketing</div>
+                    <div class="agent-desc">Social media automation</div>
+                </div>
+            </div>
 
-                <div class="p-3 border-top">
-                    {% if user.is_super_admin %}
-                        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-primary w-100 mb-2">
-                            <i class="fas fa-cog me-2"></i>Admin Dashboard
-                        </a>
-                    {% endif %}
-                    <a href="{{ url_for('logout') }}" class="btn btn-outline-secondary w-100">
-                        <i class="fas fa-sign-out-alt me-2"></i>Logout
-                    </a>
+            <div class="agent-item" data-agent="analytics">
+                <div class="agent-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="agent-info">
+                    <div class="agent-name">Analytics</div>
+                    <div class="agent-desc">Business insights</div>
+                </div>
+            </div>
+
+            <div class="agent-item" data-agent="content">
+                <div class="agent-icon">
+                    <i class="fas fa-edit"></i>
+                </div>
+                <div class="agent-info">
+                    <div class="agent-name">Content</div>
+                    <div class="agent-desc">Coming soon</div>
                 </div>
             </div>
         </div>
 
-        <!-- Main chat area -->
-        <div class="col-md-9 col-lg-10 d-flex flex-column chat-container">
-            <!-- Chat header -->
-            <div class="chat-header p-3 border-bottom bg-white">
-                <h5 class="mb-0" id="current-agent">
-                    <i class="fas fa-bullhorn me-2"></i>Marketing Agent
-                </h5>
-                <small class="text-muted" id="agent-description">Ready to help with your Facebook marketing</small>
-            </div>
+        <div class="sidebar-footer">
+            {% if user.is_super_admin %}
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-cog"></i>
+                    <span class="ms-2">Admin</span>
+                </a>
+            {% endif %}
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="ms-2">Logout</span>
+            </a>
+        </div>
+    </div>
 
-            <!-- Chat messages -->
-            <div class="chat-messages flex-grow-1 p-3" id="chat-messages">
-                <div class="message assistant-message">
-                    <div class="message-content">
-                        <strong>Marketing Agent:</strong> Hello! I'm your marketing agent. I can help you manage your Facebook pages, create posts, and analyze your social media performance. What would you like to do today?
-                    </div>
-                    <div class="message-time">Just now</div>
+    <!-- Main Chat Area -->
+    <div class="chat-main">
+        <div class="chat-header">
+            <div class="chat-header-left">
+                <div class="chat-header-icon" id="header-icon">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <div class="chat-header-info">
+                    <h5 id="agent-title">Marketing Agent</h5>
+                    <p id="agent-description">Social media automation and management</p>
                 </div>
             </div>
+            <span class="status-badge">Online</span>
+        </div>
 
-            <!-- Chat input -->
-            <div class="chat-input p-3 border-top bg-white">
-                <form id="chat-form" class="d-flex">
-                    <input type="text" class="form-control me-2" id="message-input"
-                           placeholder="Type your message..." autocomplete="off">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </form>
+        <div class="chat-messages" id="chat-messages">
+            <div class="message assistant-message">
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content-wrapper">
+                    <div class="message-content">
+                        <strong>Marketing Agent:</strong> Hello! I'm your marketing agent. I can help you manage your Facebook pages, create posts, and analyze your social media performance. Try <code>/list_pages</code> or <code>/post_text</code> to get started!
+                    </div>
+                    <div class="message-meta">
+                        <span class="message-sender">AI Assistant</span>
+                        <span>•</span>
+                        <span>Just now</span>
+                    </div>
+                </div>
             </div>
+        </div>
+
+        <div class="chat-input-container">
+            <form id="chat-form" class="chat-input-wrapper">
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="message-input"
+                    placeholder="Type your message..." 
+                    autocomplete="off"
+                >
+                <button type="submit" class="chat-send-btn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
         </div>
     </div>
 </div>
+{% endblock %}
 
-<style>
-.sidebar {
-    height: calc(100vh - 80px);
-    position: sticky;
-    top: 80px;
-}
-
-.chat-container {
-    height: calc(100vh - 80px);
-}
-
-.agent-item {
-    padding: 12px;
-    margin-bottom: 8px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.agent-item:hover {
-    background-color: #e9ecef;
-}
-
-.agent-item.active {
-    background-color: #0d6efd;
-    color: white;
-}
-
-.chat-messages {
-    overflow-y: auto;
-    background-color: #f8f9fa;
-}
-
-.message {
-    margin-bottom: 20px;
-    max-width: 85%;
-}
-
-.assistant-message {
-    margin-right: auto;
-}
-
-.user-message {
-    margin-left: auto;
-}
-
-.message-content {
-    padding: 12px 16px;
-    border-radius: 18px;
-    background-color: white;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-}
-
-.user-message .message-content {
-    background-color: #0d6efd;
-    color: white;
-}
-
-.message-time {
-    font-size: 0.75rem;
-    color: #6c757d;
-    margin-top: 4px;
-    padding: 0 16px;
-}
-
-.chat-input {
-    background-color: white;
-}
-
-#message-input {
-    border-radius: 25px;
-    border: 1px solid #e0e0e0;
-    padding: 12px 20px;
-}
-
-#message-input:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
-}
-
-.btn-primary {
-    border-radius: 50%;
-    width: 45px;
-    height: 45px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-</style>
-
+{% block extra_js %}
 <script>
-// Client state
 let currentAgent = 'marketing';
+
+const agentConfig = {
+    'marketing': {
+        title: 'Marketing Agent',
+        description: 'Social media automation and management',
+        icon: 'fa-bullhorn',
+        welcome: 'Hello! I\'m your marketing agent. I can help you manage your Facebook pages, create posts, and analyze your social media performance. Try /list_pages or /post_text to get started!'
+    },
+    'analytics': {
+        title: 'Analytics Agent',
+        description: 'Natural language database queries and insights',
+        icon: 'fa-chart-bar',
+        welcome: 'Hello! I\'m your analytics agent. I can answer questions about your business data using natural language. Try /stats for an overview, /top_products to see bestsellers, or just ask me anything like "What was our revenue last month?"'
+    },
+    'content': {
+        title: 'Content Agent',
+        description: 'Content creation and management',
+        icon: 'fa-edit',
+        welcome: 'Hello! I\'m your content agent. I\'m currently in development. Stay tuned for more features!'
+    }
+};
 
 // Chat functionality
 document.getElementById('chat-form').addEventListener('submit', async function(e) {
     e.preventDefault();
-
     const messageInput = document.getElementById('message-input');
     const message = messageInput.value.trim();
-
     if (!message) return;
 
     addMessage(message, 'user');
@@ -216,20 +550,25 @@ function addMessage(content, sender) {
     messageDiv.className = `message ${sender}-message`;
 
     const now = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    const agentName = agentConfig[currentAgent]?.title || 'Agent';
 
-    // Get current agent name
-    const agentNames = {
-        'marketing': 'Marketing Agent',
-        'analytics': 'Analytics Agent',
-        'content': 'Content Agent'
-    };
-    const agentName = agentNames[currentAgent] || 'Agent';
+    const avatarIcon = sender === 'assistant' ? '<i class="fas fa-robot"></i>' : '<i class="fas fa-user"></i>';
+    const senderLabel = sender === 'assistant' ? agentName : 'You';
 
     messageDiv.innerHTML = `
-        <div class="message-content">
-            ${sender === 'assistant' ? '<strong>' + agentName + ':</strong> ' : ''}${content}
+        <div class="message-avatar">
+            ${avatarIcon}
         </div>
-        <div class="message-time">${now}</div>
+        <div class="message-content-wrapper">
+            <div class="message-content">
+                ${content}
+            </div>
+            <div class="message-meta">
+                <span class="message-sender">${senderLabel}</span>
+                <span>•</span>
+                <span>${now}</span>
+            </div>
+        </div>
     `;
 
     messagesContainer.appendChild(messageDiv);
@@ -239,40 +578,33 @@ function addMessage(content, sender) {
 // Agent switching
 document.querySelectorAll('.agent-item').forEach(item => {
     item.addEventListener('click', function() {
-        // Update active state
         document.querySelectorAll('.agent-item').forEach(i => i.classList.remove('active'));
         this.classList.add('active');
 
-        // Set currentAgent from data-agent
         currentAgent = this.getAttribute('data-agent') || 'marketing';
+        const config = agentConfig[currentAgent];
 
         // Update header
-        document.getElementById('current-agent').innerHTML = this.innerHTML;
+        document.getElementById('agent-title').textContent = config.title;
+        document.getElementById('agent-description').textContent = config.description;
+        document.getElementById('header-icon').innerHTML = `<i class="fas ${config.icon}"></i>`;
 
-        // Update description
-        const descriptions = {
-            'marketing': 'Ready to help with your Facebook marketing',
-            'analytics': 'Natural language database queries and business insights',
-            'content': 'Content creation and management (coming soon)'
-        };
-        document.getElementById('agent-description').textContent = descriptions[currentAgent] || 'Ready to assist';
-
-        // Custom welcome messages for each agent
-        const welcomeMessages = {
-            'marketing': 'Hello! I\'m your marketing agent. I can help you manage your Facebook pages, create posts, and analyze your social media performance. Try /list_pages or /post_text to get started!',
-            'analytics': 'Hello! I\'m your analytics agent. I can answer questions about your business data using natural language. Try /stats for an overview, /top_products to see bestsellers, or just ask me anything like "What was our revenue last month?"',
-            'content': 'Hello! I\'m your content agent. I\'m currently in development. Stay tuned for more features!'
-        };
-
-        const welcomeMessage = welcomeMessages[currentAgent] || 'Hello! I\'m ready to assist you. What can I help you with?';
-
-        // Clear chat and add welcome message
+        // Clear and reset chat
         document.getElementById('chat-messages').innerHTML = `
             <div class="message assistant-message">
-                <div class="message-content">
-                    <strong>${this.textContent.trim()}:</strong> ${welcomeMessage}
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
                 </div>
-                <div class="message-time">Just now</div>
+                <div class="message-content-wrapper">
+                    <div class="message-content">
+                        <strong>${config.title}:</strong> ${config.welcome}
+                    </div>
+                    <div class="message-meta">
+                        <span class="message-sender">AI Assistant</span>
+                        <span>•</span>
+                        <span>Just now</span>
+                    </div>
+                </div>
             </div>
         `;
     });
