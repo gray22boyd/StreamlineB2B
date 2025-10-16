@@ -377,6 +377,48 @@
             max-width: 85%;
         }
     }
+
+    /* Typing Indicator / Loading Animation */
+    .typing-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 1.25rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .typing-indicator .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #667eea;
+        animation: typing 1.4s infinite;
+    }
+
+    .typing-indicator .dot:nth-child(1) {
+        animation-delay: 0s;
+    }
+
+    .typing-indicator .dot:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .typing-indicator .dot:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+        0%, 60%, 100% {
+            transform: translateY(0);
+            opacity: 0.5;
+        }
+        30% {
+            transform: translateY(-10px);
+            opacity: 1;
+        }
+    }
 </style>
 {% endblock %}
 
@@ -413,16 +455,6 @@
                 <div class="agent-info">
                     <div class="agent-name">Analytics</div>
                     <div class="agent-desc">Business insights</div>
-                </div>
-            </div>
-
-            <div class="agent-item" data-agent="content">
-                <div class="agent-icon">
-                    <i class="fas fa-edit"></i>
-                </div>
-                <div class="agent-info">
-                    <div class="agent-name">Content</div>
-                    <div class="agent-desc">Coming soon</div>
                 </div>
             </div>
         </div>
@@ -508,12 +540,6 @@ const agentConfig = {
         description: 'Natural language database queries and insights',
         icon: 'fa-chart-bar',
         welcome: 'Hello! I\'m your analytics agent. I can answer questions about your business data using natural language. Try /stats for an overview, /top_products to see bestsellers, or just ask me anything like "What was our revenue last month?"'
-    },
-    'content': {
-        title: 'Content Agent',
-        description: 'Content creation and management',
-        icon: 'fa-edit',
-        welcome: 'Hello! I\'m your content agent. I\'m currently in development. Stay tuned for more features!'
     }
 };
 
@@ -526,6 +552,9 @@ document.getElementById('chat-form').addEventListener('submit', async function(e
 
     addMessage(message, 'user');
     messageInput.value = '';
+    
+    // Show loading indicator
+    showTypingIndicator();
 
     try {
         const resp = await fetch('/api/chat', {
@@ -534,12 +563,18 @@ document.getElementById('chat-form').addEventListener('submit', async function(e
             body: JSON.stringify({ agent: currentAgent, message })
         });
         const data = await resp.json();
+        
+        // Remove loading indicator
+        removeTypingIndicator();
+        
         if (data.error) {
             addMessage('Error: ' + data.error, 'assistant');
             return;
         }
         if (data.text) addMessage(data.text, 'assistant');
     } catch (err) {
+        // Remove loading indicator on error too
+        removeTypingIndicator();
         addMessage('Network error: ' + (err?.message || err), 'assistant');
     }
 });
@@ -573,6 +608,36 @@ function addMessage(content, sender) {
 
     messagesContainer.appendChild(messageDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function showTypingIndicator() {
+    const messagesContainer = document.getElementById('chat-messages');
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'message assistant-message';
+    typingDiv.id = 'typing-indicator';
+    
+    typingDiv.innerHTML = `
+        <div class="message-avatar">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div class="message-content-wrapper">
+            <div class="typing-indicator">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+    `;
+    
+    messagesContainer.appendChild(typingDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function removeTypingIndicator() {
+    const indicator = document.getElementById('typing-indicator');
+    if (indicator) {
+        indicator.remove();
+    }
 }
 
 // Agent switching
