@@ -249,21 +249,15 @@ Provide a direct, simple answer to the question. Be conversational and focus onl
         """
         try:
             stats_query = """
-            WITH stats AS (
-                SELECT 
-                    COUNT(DISTINCT c.id) as total_customers,
-                    COUNT(DISTINCT p.id) as total_products,
-                    COUNT(DISTINCT o.id) as total_orders,
-                    COUNT(DISTINCT CASE WHEN o.status = 'completed' THEN o.id END) as completed_orders,
-                    ROUND(SUM(CASE WHEN o.status = 'completed' THEN o.total_amount ELSE 0 END), 2) as total_revenue,
-                    ROUND(AVG(CASE WHEN o.status = 'completed' THEN o.total_amount END), 2) as avg_order_value,
-                    COUNT(DISTINCT o.customer_id) as customers_with_orders,
-                    MAX(o.order_date) as last_order_date
-                FROM analytics_demo_customers c
-                CROSS JOIN analytics_demo_products p
-                LEFT JOIN analytics_demo_orders o ON TRUE
-            )
-            SELECT * FROM stats;
+            SELECT 
+                (SELECT COUNT(*) FROM analytics_demo_customers) as total_customers,
+                (SELECT COUNT(*) FROM analytics_demo_products) as total_products,
+                (SELECT COUNT(*) FROM analytics_demo_orders) as total_orders,
+                (SELECT COUNT(*) FROM analytics_demo_orders WHERE status = 'completed') as completed_orders,
+                (SELECT ROUND(COALESCE(SUM(total_amount), 0), 2) FROM analytics_demo_orders WHERE status = 'completed') as total_revenue,
+                (SELECT ROUND(COALESCE(AVG(total_amount), 0), 2) FROM analytics_demo_orders WHERE status = 'completed') as avg_order_value,
+                (SELECT COUNT(DISTINCT customer_id) FROM analytics_demo_orders) as customers_with_orders,
+                (SELECT MAX(order_date) FROM analytics_demo_orders) as last_order_date;
             """
             
             with self.db_connection.cursor(cursor_factory=RealDictCursor) as cur:
